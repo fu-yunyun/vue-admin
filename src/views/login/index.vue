@@ -33,8 +33,27 @@
         <el-form-item prop="password" class="item-form">
           <label>密码</label>
           <el-input
-            type="password"
+            type="text"
             v-model="ruleForm.password"
+            autocomplete="off"
+            maxlength="20"
+            minlength="6"
+          ></el-input>
+        </el-form-item>
+
+        <!--获得注册当前的状态，v-show可以和注册样式状态连用
+        使用v-show在提交的时候也会验证确认密码，当验证未通过的时候就会提交失败，所以需要在提交时判断是注册还是登录
+        使用v-if时当值为false时会删除整个dom，不会影响
+        -->
+        <el-form-item
+          prop="confirmP"
+          class="item-form"
+          v-if="menuTab[1].current"
+        >
+          <label>重复密码</label>
+          <el-input
+            type="text"
+            v-model="ruleForm.confirmP"
             autocomplete="off"
             maxlength="20"
             minlength="6"
@@ -73,16 +92,23 @@
   </div>
 </template>
 <script>
+// 引入js文件
+import {
+  stripscript,
+  validateEmail,
+  validatePassword,
+  validateCode,
+} from "@/utils/validate";
+
 export default {
   name: "login",
   data() {
     // 验证用户名
     var validateUsername = (rule, value, callback) => {
-      var regTest = /^[a-zA-Z0-9]+([-_.][a-zA-Z0-9]+)*@[a-zA-Z0-9]+([-_.][a-zA-Z0-9]+)*\.[a-z]{2,}$/;
       if (value === "") {
         callback(new Error("请输入用户名"));
         // 判断邮箱格式，采用正则表达式匹配
-      } else if (!regTest.test(value)) {
+      } else if (validateEmail(value)) {
         callback(new Error("用户名格式有误"));
       } else {
         callback();
@@ -91,23 +117,39 @@ export default {
 
     // 验证密码
     var validatePass = (rule, value, callback) => {
-      var passTest = /(?!^\d+$)(?!^[a-zA-Z]+$)[0-9a-zA-Z]{6,20}/;
+      // 判断过滤后的字符和输入字符长度是否相同以判断是否包含特殊字符
+      if (stripscript(value).length != value.length) {
+        callback(new Error("密码不得包含特殊字符，请重新输入！"));
+        // 将过滤的字符赋值给value以便后续校验
+        value = stripscript(value);
+      }
       if (value === "") {
-        callback(new Error("请输入密码"));
+        callback(new Error("请再次输入密码"));
         // 判断密码格式，采用正则表达式匹配
-      } else if (!passTest.test(value)) {
+      } else if (validatePassword(value)) {
         callback(new Error("密码只允许输入6-20位的字母和数字"));
       } else {
         callback();
       }
     };
 
+    // 验证重复密码
+    var validateConfirmP = (rule, value, callback) => {
+      // 判断是注册还是登录，以便判断是否需要验证通过
+
+      if (!value) {
+        return callback(new Error("输入确认密码"));
+      } else if (value != this.ruleForm.password) {
+        callback(new Error("确认密码与密码不一致"));
+      } else {
+        callback();
+      }
+    };
     // 验证验证码
     var checkCode = (rule, value, callback) => {
-      var codeTest = /^[a-z0-9]{6}$/;
       if (!value) {
         return callback(new Error("输入验证码"));
-      } else if (!codeTest.test(value)) {
+      } else if (validateCode(value)) {
         callback(new Error("验证码格式错误"));
       } else {
         callback();
@@ -124,10 +166,12 @@ export default {
         username: "",
         password: "",
         code: "",
+        confirmP: "",
       },
       rules: {
         username: [{ validator: validateUsername, trigger: "blur" }],
         password: [{ validator: validatePass, trigger: "blur" }],
+        confirmP: [{ validator: validateConfirmP, trigger: "blur" }],
         code: [{ validator: checkCode, trigger: "blur" }],
       },
     };
@@ -146,16 +190,16 @@ export default {
       // 将当前的对象中的current初始化为true
       data.current = true;
     },
-  },
-  submitForm(formName) {
-    this.$refs[formName].validate((valid) => {
-      if (valid) {
-        alert("submit!");
-      } else {
-        console.log("error submit!!");
-        return false;
-      }
-    });
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          alert("submit!");
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
   },
 };
 </script>

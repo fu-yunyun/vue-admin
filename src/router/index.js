@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-
+import Login from "../views/login/index.vue"
 Vue.use(VueRouter);
 // eslint-disable-next-line
 const routes = [
@@ -11,7 +11,8 @@ const routes = [
   {
     path: "/login",
     name: "Login",
-    component: () => import("../views/login/index.vue")
+    component: Login
+    // component: () => import("../views/login/index.vue")
   },
 ];
 
