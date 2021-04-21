@@ -50,8 +50,6 @@
           class="item-form"
           v-if="menuTab[1].current"
         >
-          <!-- v-if = " model === 'reg' "  -->
-
           <label>重复密码</label>
           <el-input
             type="text"
@@ -101,45 +99,10 @@ import {
   validatePassword,
   validateCode,
 } from "@/utils/validate";
-// 引用reactive
-import { isRef, reactive, ref, toRefs, onMounted } from "@vue/composition-api";
+
 export default {
   name: "login",
-
-  /*  
-  生命周期：
-      注意依赖 Composition-api   
-        beforeCreate
-        created  
-        vue 3.0 被vue 3.0 代替
-        beforeMount ---> onBeforeMount
-        mounted ---> onMounted
-        methods 去除，普通方式写方法
-        beforeUpdate ---> onUpdate
-        beforeDestory ---> onBeforeUnmount
-        destoty ---> onUmounted
-        errorCapture ---> onErrorCapture
-
-        */
-
-  /*
-
-function aa(){
-  return {
-    a:1,
-    b:2,
-    c:3
-  }
-}
-
-let {a,b:8,c} = aa();
-取值，或 修改
-
-*/
-  // 组件实例对象
-  setup(props, context) {
-    // 放值组件信息 例如：data(){},生命周期...
-
+  data() {
     // 验证用户名
     var validateUsername = (rule, value, callback) => {
       if (value === "") {
@@ -176,7 +139,7 @@ let {a,b:8,c} = aa();
 
       if (!value) {
         return callback(new Error("输入确认密码"));
-      } else if (value != ruleForm.password) {
+      } else if (value != this.ruleForm.password) {
         callback(new Error("确认密码与密码不一致"));
       } else {
         callback();
@@ -193,58 +156,42 @@ let {a,b:8,c} = aa();
       }
     };
 
-    const ruleForm = reactive({
-      username: "",
-      password: "",
-      code: "",
-      confirmP: "",
-    });
-    const rules = {
-      username: [{ validator: validateUsername, trigger: "blur" }],
-      password: [{ validator: validatePass, trigger: "blur" }],
-      confirmP: [{ validator: validateConfirmP, trigger: "blur" }],
-      code: [{ validator: checkCode, trigger: "blur" }],
+    return {
+      menuTab: [
+        { text: "登录", current: true },
+        { text: "注册", current: false },
+      ],
+
+      ruleForm: {
+        username: "",
+        password: "",
+        code: "",
+        confirmP: "",
+      },
+      rules: {
+        username: [{ validator: validateUsername, trigger: "blur" }],
+        password: [{ validator: validatePass, trigger: "blur" }],
+        confirmP: [{ validator: validateConfirmP, trigger: "blur" }],
+        code: [{ validator: checkCode, trigger: "blur" }],
+      },
     };
-
-    // reactive: 声明遇到对象类型，使用reactive处理
-    const menuTab = reactive([
-      { text: "登录", current: true, type: "login" },
-      { text: "注册", current: false, type: "reg" },
-    ]);
-    console.log(menuTab);
-
-    // 声明基础数据使用ref
-    const model = ref("login");
-    console.log(model.value);
-
-    // isRef() 检查数据是否为一个基础数据类型 或者对象数据
-    console.log(isRef(model) ? "基础数据" : "是对象数据");
-
-    // toRefs() 将引用数据类型转换为基础数据类型
-    const aa = reactive({
-      x: 0,
-      y: 1,
-    });
-    const aaa = toRefs(aa);
-    console.log(aaa.x);
-
-    const obj = toRefs(menuTab[0]);
-    console.log(obj.text);
-
-    // 方法的定义
-
-    const toggleMenu = (data) => {
+  },
+  // 创建
+  create() {},
+  // 挂载
+  mount() {},
+  methods: {
+    toggleMenu(data) {
       // 通过foreach函数循环数组，element直接拿的是元素对象
-      menuTab.forEach((element) => {
+      this.menuTab.forEach((element) => {
         // 将所有的数组元素内对象的current直接初始化为false，排他思想
         element.current = false;
       });
       // 将当前的对象中的current初始化为true
       data.current = true;
-      model.value = data.type;
-    };
-    const submitForm = (formName) => {
-      context.refs[formName].validate((valid) => {
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
         if (valid) {
           alert("submit!");
         } else {
@@ -252,18 +199,7 @@ let {a,b:8,c} = aa();
           return false;
         }
       });
-    };
-
-    onMounted(() => {});
-
-    return {
-      menuTab,
-      ruleForm,
-      rules,
-      toggleMenu,
-      submitForm,
-      model,
-    };
+    },
   },
 };
 </script>
