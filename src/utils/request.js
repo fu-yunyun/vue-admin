@@ -16,7 +16,7 @@ const service = axios.create({
     //http://localhost:8081/api/  ==  http://www.web-jshtml.cn/productapi/api/
     // 相当于 http://localhost:8081/api  变成了http://www.web-jshtml.cn/productapi
     baseURL: BASEURL,
-    timeout: 1000
+    timeout: 15000
 });
 
 // Add a request interceptor  请求拦截器

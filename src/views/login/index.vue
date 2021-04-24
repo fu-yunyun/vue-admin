@@ -33,7 +33,7 @@
         <el-form-item prop="password" class="item-form">
           <label>密码</label>
           <el-input
-            type="text"
+            type="password"
             v-model="ruleForm.password"
             autocomplete="off"
             maxlength="20"
@@ -54,7 +54,7 @@
 
           <label>重复密码</label>
           <el-input
-            type="text"
+            type="password"
             v-model="ruleForm.confirmP"
             autocomplete="off"
             maxlength="20"
@@ -67,14 +67,18 @@
           <el-row :gutter="11">
             <el-col :span="15"
               ><el-input
-                v-model.number="ruleForm.code"
+                v-model="ruleForm.code"
                 minlength="6"
                 maxlength="6"
               ></el-input
             ></el-col>
             <el-col :span="9">
-              <el-button type="success" class="block" @click="getSms"
-                >获取验证码
+              <el-button
+                type="success"
+                class="block"
+                @click="getSms"
+                :disabled="codeButtonStatus.status"
+                >{{ codeButtonStatus.text }}
               </el-button>
             </el-col>
           </el-row>
@@ -97,7 +101,7 @@
 <script>
 // 引入拦截器 获取默认暴漏，不需要{}
 // import service from "@/utils/request";
-import { GetSms } from "@/api/login";
+import { GetSms, Register, Login } from "@/api/login";
 // 引入js文件
 import {
   stripscript,
@@ -199,6 +203,11 @@ let {a,b:8,c} = aa();
       }
     };
 
+    /***************************************************************************************************** */
+    // 数据声明
+
+    // 倒计时
+    const timer = ref();
     const ruleForm = reactive({
       username: "",
       password: "",
@@ -215,7 +224,7 @@ let {a,b:8,c} = aa();
     // reactive: 声明遇到对象类型，使用reactive处理
     const menuTab = reactive([
       { text: "登录", current: true, type: "login" },
-      { text: "注册", current: false, type: "reg" },
+      { text: "注册", current: false, type: "register" },
     ]);
     // console.log(menuTab);
 
@@ -223,8 +232,19 @@ let {a,b:8,c} = aa();
     const model = ref("login");
 
     // 登录按钮禁用状态
-    const loginButtonStatus = ref(true);
+    const loginButtonStatus = ref(false);
 
+    // // 验证码按钮状态
+    // const codeButtonStatus = ref(false);
+
+    // // 验证码按钮值
+    // const codeButtonText = ref("获取验证码");
+
+    // 通过对象的方式处理按钮状态值
+    const codeButtonStatus = reactive({
+      status: false,
+      text: "获取验证码",
+    });
     // console.log(model.value);
 
     // isRef() 检查数据是否为一个基础数据类型 或者对象数据
@@ -240,8 +260,18 @@ let {a,b:8,c} = aa();
 
     // const obj = toRefs(menuTab[0]);
     // console.log(obj.text);
-
+    /****************************************************************************************************** */
     // 方法的定义
+    // 清除定时器及恢复按钮默认设置
+
+    const clearCountDown = () => {
+      // 按钮切换，初始化登录按钮和获取验证码按钮
+      loginButtonStatus.value = false;
+      // 清除定时器
+      clearInterval(timer.value);
+      codeButtonStatus.status = false;
+      codeButtonStatus.text = "获取验证码";
+    };
 
     const toggleMenu = (data) => {
       // 通过foreach函数循环数组，element直接拿的是元素对象
@@ -252,7 +282,38 @@ let {a,b:8,c} = aa();
       // 将当前的对象中的current初始化为true
       data.current = true;
       model.value = data.type;
+
+      // 切换form，对form表单进行重置
+      refs.ruleForm.resetFields(); //vue 3.0
+      // this.$refs[ruleForm].resetFields(); vue 2.0
+
+      clearCountDown();
     };
+
+    // 定时器 倒计时
+    const countDown = (number) => {
+      // 判断定时器是否存在，存在则清除 防止按钮未disabled 的多次触发
+      if (timer.value) {
+        clearInterval(timer.value);
+      }
+
+      // setTimeout 只执行一次
+      // setInterval 不断执行，需要条件终止
+      let time = number;
+      timer.value = setInterval(() => {
+        if (time > 0) {
+          time--;
+          codeButtonStatus.text = `${time} 秒后获取`;
+        } else {
+          //更新获取验证码按钮状态
+          codeButtonStatus.status = false;
+          codeButtonStatus.text = "再次获取";
+          clearInterval(timer.value);
+        }
+      }, 1000);
+    };
+
+    /**************************************************************************************************** */
 
     //获取验证码
     const getSms = () => {
@@ -265,16 +326,41 @@ let {a,b:8,c} = aa();
         root.$message.error("邮箱格式错误");
         return false;
       }
-
+      // 请求数据封装
       let requestData = {
         username: ruleForm.username,
         module: model.value,
       };
-      // // 修改获取验证按钮状态
-      // updateButtonStatus({
-      //   status: true,
-      //   text: "发送中",
-      // });
+      // 更新获取验证码状态
+      codeButtonStatus.status = true;
+      codeButtonStatus.text = "发送中";
+      // 请求接口  请求获取验证码
+      GetSms(requestData)
+        .then((response) => {
+          // 执行此处函数的是Promise.resolve
+          // 验证码发送成功 信息弹窗
+          let data = response.data;
+          root.$message({
+            message: data.message,
+            type: "success",
+          });
+          // 由于特殊原因，请求成功的操作未能完成，所以请求成功后的操作使请求失败继续进行
+          //调定时器 倒计时
+          // 启用登录或者注册按钮
+          loginButtonStatus.value = false;
+        })
+        .catch((error) => {
+          // 执行catch的是 Promise.reject(objcet);
+          // 此处的error是respond.data数据对象
+          // 验证码响应失败 信息弹窗
+          // 由于特殊原因，请求成功的操作未能完成，所以请求成功后的操作使请求失败继续进行
+          //调定时器 倒计时
+          // 启用登录或者注册按钮
+          loginButtonStatus.value = false;
+          countDown(20);
+          root.$message.error(error.message);
+          console.log("获取验证码失败");
+        });
 
       //   // 启用登录或者注册按钮
       //   loginButtonStatus.value = false;
@@ -283,31 +369,19 @@ let {a,b:8,c} = aa();
       // });
 
       // 请求接口 延时多长时间
-      GetSms(requestData)
-        .then((response) => {
-          // 执行此处函数的是Promise.resolve
-        })
-        .catch((error) => {
-          // 执行catch的是 Promise.reject(objcet);
-          // 此处的error是respond.data数据对象
-          console.log(error);
-        });
     };
+
     // 提交表单
     const submitForm = (formName) => {
-      // 触发调用  request.js
-      // axios.request({
-      //   method: "get",
-      //   url: "/user/12345",
-      //   data: {
-      //     firstName: "Fred",
-      //     lastName: "Flintstone",
-      //   },
-      // });
-
-      context.refs[formName].validate((valid) => {
+      refs[formName].validate((valid) => {
         if (valid) {
-          alert("submit!");
+          // 当按钮为注册时  请求注册
+          if (model.value == "register") {
+            register();
+          } // 当按钮为登录时，请求登录接口
+          else {
+            login();
+          }
         } else {
           console.log("error submit!!");
           return false;
@@ -315,8 +389,64 @@ let {a,b:8,c} = aa();
       });
     };
 
+    // 请求注册接口 方法封装
+    const register = () => {
+      // 提交数据校验完成 进行注册接口 请求接口注册
+      // 数据格式及数据项
+      let requestData = {
+        username: ruleForm.username,
+        password: ruleForm.password,
+        code: ruleForm.code,
+        module: "register",
+      };
+      // 请求注册接口
+      Register(requestData)
+        .then((response) => {
+          let data = response.data;
+          // 信息弹窗 提示注册成功
+          root.$message({
+            message: data.message,
+            type: "success",
+          });
+          // 注册成功,自动跳转至登录按钮
+          toggleMenu(menuTab[0]);
+        })
+        .catch((error) => {
+          // 信息弹窗，提示注册失败
+          root.$message.error(error.message);
+          console.log("注册失败");
+        });
+    };
+
+    // 请求登录接口 方法封装
+    const login = () => {
+      console.log(requestData);
+      let requestData = {
+        username: ruleForm.username,
+        password: ruleForm.password,
+        code: ruleForm.code,
+      };
+
+      Login(requestData)
+        .then((response) => {
+          let data = response.data;
+          // 信息弹窗 提示注册成功
+          root.$message({
+            message: data.message,
+            type: "success",
+          });
+        })
+        .catch((error) => {
+          // 信息弹窗，提示注册失败
+          root.$message.error(error.message);
+          console.log("登录失败");
+        });
+    };
+
+    // 生命周期 挂载
     onMounted(() => {});
 
+    // 数据返回
     return {
       menuTab,
       ruleForm,
@@ -324,6 +454,7 @@ let {a,b:8,c} = aa();
       toggleMenu,
       submitForm,
       model,
+      codeButtonStatus,
       loginButtonStatus,
       getSms,
     };

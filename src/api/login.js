@@ -8,7 +8,7 @@ export function GetSms(data) {
     // 返回数据 拿到响应的数据
     return service.request({
         method: "post",
-        url: "/getSms",
+        url: "/getSms/",
         data
     });
 }
@@ -17,4 +17,21 @@ export function GetSms(data) {
 
 // 登录
 
+export function Login(data) {
+    // 返回数据 拿到响应的数据
+    return service.request({
+        method: "post",
+        url: "/login/",
+        data
+    });
+}
+
 // 注册
+export function Register(data) {
+    // 返回数据 拿到响应的数据
+    return service.request({
+        method: "post",
+        url: "/register/",
+        data
+    });
+}
