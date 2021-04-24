@@ -72,11 +72,11 @@
                 maxlength="6"
               ></el-input
             ></el-col>
-            <el-col :span="9"
-              ><el-button type="success" class="block"
-                >获取验证码</el-button
-              ></el-col
-            >
+            <el-col :span="9">
+              <el-button type="success" class="block" @click="getSms"
+                >获取验证码
+              </el-button>
+            </el-col>
           </el-row>
         </el-form-item>
 
@@ -85,7 +85,8 @@
             type="danger"
             @click="submitForm('ruleForm')"
             class="block login-btn"
-            >提交</el-button
+            :disabled="loginButtonStatus"
+            >{{ model === "login" ? "登录" : "注册" }}</el-button
           >
         </el-form-item>
       </el-form>
@@ -94,6 +95,9 @@
   </div>
 </template>
 <script>
+// 引入拦截器 获取默认暴漏，不需要{}
+// import service from "@/utils/request";
+import { GetSms } from "@/api/login";
 // 引入js文件
 import {
   stripscript,
@@ -101,6 +105,7 @@ import {
   validatePassword,
   validateCode,
 } from "@/utils/validate";
+
 // 引用reactive
 import { isRef, reactive, ref, toRefs, onMounted } from "@vue/composition-api";
 export default {
@@ -136,8 +141,9 @@ let {a,b:8,c} = aa();
 取值，或 修改
 
 */
+
   // 组件实例对象
-  setup(props, context) {
+  setup(props, { refs, root }) {
     // 放值组件信息 例如：data(){},生命周期...
 
     // 验证用户名
@@ -199,37 +205,41 @@ let {a,b:8,c} = aa();
       code: "",
       confirmP: "",
     });
-    const rules = {
+    const rules = reactive({
       username: [{ validator: validateUsername, trigger: "blur" }],
       password: [{ validator: validatePass, trigger: "blur" }],
       confirmP: [{ validator: validateConfirmP, trigger: "blur" }],
       code: [{ validator: checkCode, trigger: "blur" }],
-    };
+    });
 
     // reactive: 声明遇到对象类型，使用reactive处理
     const menuTab = reactive([
       { text: "登录", current: true, type: "login" },
       { text: "注册", current: false, type: "reg" },
     ]);
-    console.log(menuTab);
+    // console.log(menuTab);
 
     // 声明基础数据使用ref
     const model = ref("login");
-    console.log(model.value);
+
+    // 登录按钮禁用状态
+    const loginButtonStatus = ref(true);
+
+    // console.log(model.value);
 
     // isRef() 检查数据是否为一个基础数据类型 或者对象数据
-    console.log(isRef(model) ? "基础数据" : "是对象数据");
+    // console.log(isRef(model) ? "基础数据" : "是对象数据");
 
     // toRefs() 将引用数据类型转换为基础数据类型
-    const aa = reactive({
-      x: 0,
-      y: 1,
-    });
-    const aaa = toRefs(aa);
-    console.log(aaa.x);
+    // const aa = reactive({
+    //   x: 0,
+    //   y: 1,
+    // });
+    // const aaa = toRefs(aa);
+    // console.log(aaa.x);
 
-    const obj = toRefs(menuTab[0]);
-    console.log(obj.text);
+    // const obj = toRefs(menuTab[0]);
+    // console.log(obj.text);
 
     // 方法的定义
 
@@ -243,7 +253,58 @@ let {a,b:8,c} = aa();
       data.current = true;
       model.value = data.type;
     };
+
+    //获取验证码
+    const getSms = () => {
+      // 提示
+      if (ruleForm.username == "") {
+        root.$message.error("邮箱不能为空");
+        return false;
+      }
+      if (validateEmail(ruleForm.username)) {
+        root.$message.error("邮箱格式错误");
+        return false;
+      }
+
+      let requestData = {
+        username: ruleForm.username,
+        module: model.value,
+      };
+      // // 修改获取验证按钮状态
+      // updateButtonStatus({
+      //   status: true,
+      //   text: "发送中",
+      // });
+
+      //   // 启用登录或者注册按钮
+      //   loginButtonStatus.value = false;
+      //   // 调定定时器，倒计时
+      //   countDowm(60);
+      // });
+
+      // 请求接口 延时多长时间
+      GetSms(requestData)
+        .then((response) => {
+          // 执行此处函数的是Promise.resolve
+        })
+        .catch((error) => {
+          // 执行catch的是 Promise.reject(objcet);
+          // 此处的error是respond.data数据对象
+          console.log(error);
+        });
+    };
+    // 提交表单
     const submitForm = (formName) => {
+      // 触发调用  request.js
+      // axios.request({
+      //   method: "get",
+      //   url: "/user/12345",
+      //   data: {
+      //     firstName: "Fred",
+      //     lastName: "Flintstone",
+      //   },
+      // });
+
       context.refs[formName].validate((valid) => {
         if (valid) {
           alert("submit!");
@@ -263,6 +324,8 @@ let {a,b:8,c} = aa();
       toggleMenu,
       submitForm,
       model,
+      loginButtonStatus,
+      getSms,
     };
   },
 };

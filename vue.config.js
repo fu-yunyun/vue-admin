@@ -38,12 +38,14 @@ module.exports = {
         host: "localhost",
         port: 8080, // 端口号
         https: false,
-        open: true, //配置自动启动浏览器
-
+        open: false, //配置自动启动浏览器
+        hotOnly: false,
+        proxy: null,  //设置代理
         // 配置多个代理
         proxy: {
             "/api": {
-                target: "http://localhost:3000", // 本地模拟数据服务器
+                // target: "https://reactrouter.com/web/guides/quick-start", //配置跨域服务器地址
+                target: "http://www.web-jshtml.cn/api/",
                 changeOrigin: true,
                 pathRewrite: {
                     "^/api": "" // 去掉接口地址中的api字符串
