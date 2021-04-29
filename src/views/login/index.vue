@@ -391,10 +391,23 @@ let {a,b:8,c} = aa();
         if (valid) {
           // 当按钮为注册时  请求注册
           if (model.value == "register") {
-            register();
+            root.$message({
+              type: "success",
+              message: "注册成功，赶紧去登录吧",
+            });
+            toggleMenu(menuTab[0]);
+            console.log("注册成功");
+            return true;
+            // register();
           } // 当按钮为登录时，请求登录接口
           else {
-            login();
+            root.$message({
+              type: "success",
+              message: "恭喜你登录成功",
+            });
+            console.log("登录成功");
+            return true;
+            // login();
           }
         } else {
           console.log("error submit!!");
@@ -435,7 +448,6 @@ let {a,b:8,c} = aa();
 
     // 请求登录接口 方法封装
     const login = () => {
-      console.log(requestData);
       let requestData = {
         username: ruleForm.username,
         // sha1密码加密
