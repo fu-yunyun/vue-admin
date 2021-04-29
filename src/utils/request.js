@@ -23,9 +23,16 @@ const service = axios.create({
 service.interceptors.request.use(function (config) {
     // Do something before request is sent
     // config拿到的是GetSms()全部数据，在数据请求服务器之前进行处理
+    // 在请求头，后台需要前端传输什么数据(在请求头添加参数)
+
+    config.headers.tokey = '11111';
+    config.headers['username'] = 'toney'
+
+    console.log(config.headers)
     return config;
 }, function (error) {
     // Do something with request error
+
     return Promise.reject(error);
 });
 
@@ -34,15 +41,15 @@ service.interceptors.response.use(function (response) {
     // Do something with response data
     // response.data 拿到的是服务器响应的数据，对响应的数据进行处理
     // 一切数据由后台封装response
-    // let data = response.data;
-    // if (data.rescode != 0) {
-    //     // 数据有问题
-    //     return Promise.reject(data);
-    // } else {
-    //     数据无误
-    //     Message.error(data.message);
-    //     return Primise.resolve;
-    // }
+    let data = response.data;
+    if (data.rescode != 0) {
+        // 数据有问题
+        return Promise.reject(data);
+    } else {
+        // 数据无误
+        Message.error(data.message);
+        return Primise.resolve;
+    }
     return response;
 }, function (error) {
     // Do something with response error

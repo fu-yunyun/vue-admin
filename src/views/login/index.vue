@@ -99,6 +99,8 @@
   </div>
 </template>
 <script>
+// 引入加密sha1
+import sha1 from "js-sha1";
 // 引入拦截器 获取默认暴漏，不需要{}
 // import service from "@/utils/request";
 import { GetSms, Register, Login } from "@/api/login";
@@ -232,7 +234,7 @@ let {a,b:8,c} = aa();
     const model = ref("login");
 
     // 登录按钮禁用状态
-    const loginButtonStatus = ref(false);
+    const loginButtonStatus = ref(true);
 
     // // 验证码按钮状态
     // const codeButtonStatus = ref(false);
@@ -266,13 +268,19 @@ let {a,b:8,c} = aa();
 
     const clearCountDown = () => {
       // 按钮切换，初始化登录按钮和获取验证码按钮
-      loginButtonStatus.value = false;
+      loginButtonStatus.value = true;
       // 清除定时器
       clearInterval(timer.value);
       codeButtonStatus.status = false;
       codeButtonStatus.text = "获取验证码";
     };
 
+    // 表单数据清除
+    const resetFromatData = () => {
+      // 切换form，对form表单进行重置
+      refs.ruleForm.resetFields(); //vue 3.0
+      // this.$refs[ruleForm].resetFields(); vue 2.0
+    };
     const toggleMenu = (data) => {
       // 通过foreach函数循环数组，element直接拿的是元素对象
       menuTab.forEach((element) => {
@@ -282,14 +290,16 @@ let {a,b:8,c} = aa();
       // 将当前的对象中的current初始化为true
       data.current = true;
       model.value = data.type;
-
-      // 切换form，对form表单进行重置
-      refs.ruleForm.resetFields(); //vue 3.0
-      // this.$refs[ruleForm].resetFields(); vue 2.0
-
+      // 清除表单数据
+      resetFromatData();
+      // 清除定时器
       clearCountDown();
     };
-
+    // 更新按钮状态
+    const updateCodeButton = (data) => {
+      codeButtonStatus.status = data.status;
+      codeButtonStatus.text = data.text;
+    };
     // 定时器 倒计时
     const countDown = (number) => {
       // 判断定时器是否存在，存在则清除 防止按钮未disabled 的多次触发
@@ -306,8 +316,10 @@ let {a,b:8,c} = aa();
           codeButtonStatus.text = `${time} 秒后获取`;
         } else {
           //更新获取验证码按钮状态
-          codeButtonStatus.status = false;
-          codeButtonStatus.text = "再次获取";
+          updateCodeButton({
+            status: false,
+            text: "再次发送",
+          });
           clearInterval(timer.value);
         }
       }, 1000);
@@ -332,8 +344,10 @@ let {a,b:8,c} = aa();
         module: model.value,
       };
       // 更新获取验证码状态
-      codeButtonStatus.status = true;
-      codeButtonStatus.text = "发送中";
+      updateCodeButton({
+        status: true,
+        text: "发送中",
+      });
       // 请求接口  请求获取验证码
       GetSms(requestData)
         .then((response) => {
@@ -395,7 +409,8 @@ let {a,b:8,c} = aa();
       // 数据格式及数据项
       let requestData = {
         username: ruleForm.username,
-        password: ruleForm.password,
+        //加密密码
+        password: sha1(ruleForm.password),
         code: ruleForm.code,
         module: "register",
       };
@@ -423,21 +438,22 @@ let {a,b:8,c} = aa();
       console.log(requestData);
       let requestData = {
         username: ruleForm.username,
-        password: ruleForm.password,
+        // sha1密码加密
+        password: sha1(ruleForm.password),
         code: ruleForm.code,
       };
 
       Login(requestData)
         .then((response) => {
           let data = response.data;
-          // 信息弹窗 提示注册成功
+          // 信息弹窗 提示登录成功
           root.$message({
             message: data.message,
             type: "success",
           });
         })
         .catch((error) => {
-          // 信息弹窗，提示注册失败
+          // 信息弹窗，提示登录失败
           root.$message.error(error.message);
           console.log("登录失败");
         });
