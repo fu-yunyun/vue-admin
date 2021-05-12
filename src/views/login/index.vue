@@ -184,8 +184,6 @@ let {a,b:8,c} = aa();
 
     // 验证重复密码
     var validateConfirmP = (rule, value, callback) => {
-      // 判断是注册还是登录，以便判断是否需要验证通过
-
       if (!value) {
         return callback(new Error("输入确认密码"));
       } else if (value != ruleForm.password) {
@@ -365,10 +363,10 @@ let {a,b:8,c} = aa();
         })
         .catch((error) => {
           // 执行catch的是 Promise.reject(objcet);
-          // 此处的error是respond.data数据对象
+          // 此处的error是respond数据对象
           // 验证码响应失败 信息弹窗
           // 由于特殊原因，请求成功的操作未能完成，所以请求成功后的操作使请求失败继续进行
-          //调定时器 倒计时
+          // 调定时器 倒计时
           // 启用登录或者注册按钮
           loginButtonStatus.value = false;
           countDown(20);
@@ -395,9 +393,9 @@ let {a,b:8,c} = aa();
               type: "success",
               message: "注册成功，赶紧去登录吧",
             });
+            // 跳转至登录
             toggleMenu(menuTab[0]);
             console.log("注册成功");
-            return true;
             // register();
           } // 当按钮为登录时，请求登录接口
           else {
@@ -406,8 +404,15 @@ let {a,b:8,c} = aa();
               message: "恭喜你登录成功",
             });
             console.log("登录成功");
-            return true;
             // login();
+            // 跳转页面至控制台 路由跳转
+            root.$router.push({
+              name: "Console",
+              params: {
+                // uri传递参数，刷新会消失  query不会消失
+              },
+            });
+            console.log("页面跳转成功 --- > 控制台");
           }
         } else {
           console.log("error submit!!");

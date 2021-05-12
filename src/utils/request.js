@@ -28,7 +28,7 @@ service.interceptors.request.use(function (config) {
     config.headers.tokey = '11111';
     config.headers['username'] = 'toney'
 
-    console.log(config.headers)
+    // console.log(config.headers)
     return config;
 }, function (error) {
     // Do something with request error

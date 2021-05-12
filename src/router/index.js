@@ -17,7 +17,15 @@ const routes = [
   {
     path: "/console",
     name: "Console",
-    component: () => import("../views/Console/index.vue")
+    component: () => import("../views/Layout/index.vue"),
+    children: [
+      {
+        // router-view拿到的是children的第一个对象页面数据，需要跟uri一一对应
+        path: "/console",
+        name: "Console",
+        component: () => import("../views/Console/index.vue"),
+      }
+    ]
   },
 ];
 
