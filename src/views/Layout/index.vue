@@ -1,7 +1,6 @@
 
  <template>
   <div id="layout">
-    控制台
     <LayoutHeader />
     <LayoutMain />
     <LayoutNav />

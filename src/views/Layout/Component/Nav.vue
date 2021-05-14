@@ -1,10 +1,76 @@
 <template>
-  <div id="nav-wrap">菜单栏</div>
+  <div id="nav-wrap">
+    <el-menu
+      default-active="1-4-1"
+      class="el-menu-vertical-demo"
+      @open="handleOpen"
+      @close="handleClose"
+      :collapse="isCollapse"
+      background-color="transparent"
+      text-color="#fff"
+      router="true"
+    >
+      <!-- 在循环的时候，template是不能够被解析的 -->
+      <template v-for="(item, index) in routers">
+        <el-submenu :index="index" :key="item.id" v-if="!item.hidden">
+          <!-- 一级菜单 star-->
+          <template slot="title">
+            <i class="el-icon-location"></i>
+            <span slot="title">{{ item.meta.name }}</span>
+          </template>
+          <!-- 一级菜单 end -->
+
+          <!-- 一级子菜单 star-->
+          <el-menu-item-group>
+            <!-- <span slot="title">分组一</span> -->
+            <el-menu-item
+              :index="subItem.path"
+              v-for="subItem in item.children"
+              :key="subItem.id"
+              >{{ subItem.meta.name }}</el-menu-item
+            >
+          </el-menu-item-group>
+          <!-- 一级子菜单 end -->
+        </el-submenu>
+      </template>
+    </el-menu>
+  </div>
 </template>
 
 <script>
+import { isRef, reactive, ref, toRefs, onMounted } from "@vue/composition-api";
 export default {
   name: "nav-warp",
+  setup(props, { root }) {
+    /********************************data 对象数据 star ************************************************ */
+
+    // 获取三个路由并保存
+    const routers = reactive(root.$router.options.routes);
+
+    /********************************data对象数据 end ************************************************* */
+
+    /********************************data数据 star **************************************************** */
+
+    const isCollapse = ref(false);
+
+    /********************************data数据 end **************************************************** */
+
+    /********************************方法的定义 star ************************************************** */
+    const handleOpen = (key, keyPath) => {
+      console.log(key, keyPath);
+    };
+    const handleClose = (key, keyPath) => {
+      console.log(key, keyPath);
+    };
+
+    /********************************方法的定义 end ************************************************** */
+    return {
+      isCollapse,
+      routers,
+      handleOpen,
+      handleClose,
+    };
+  },
 };
 </script>
 
@@ -16,6 +82,6 @@ export default {
   left: 0;
   width: $navMenu;
   height: 100vh;
-  background-color: #344299;
+  background-color: #344a5f;
 }
 </style>
