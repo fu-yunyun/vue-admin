@@ -20,10 +20,30 @@ module.exports = {
     lintOnSave: false,
 
     //是否使用包含运行时编译器的 Vue 构建版本。设置为 true 后你就可以在 Vue 组件中使用 template 选项了，但是这会让你的应用额外增加 10kb 左右。
-    runtimeCompiler: false,
-
-    // 如果你不需要生产环境的 source map，可以将其设置为 false 以加速生产环境构建。
-    productionSourceMap: false,
+    runtimeCompiler: true,
+    productionSourceMap: false, // 是否在构建生产包时生成 sourceMap 文件，false将提高构建速度
+    chainWebpack: config => {
+        // config.resolve.alias
+        //     .set('@', resolve('src')) //3.0的写法 映射路径 @代表src 比如要写一个图片 <img src='@/assets/img/1.jpg'/>就会读取src下assets下img下的图片
+        const svgRule = config.module.rule('svg');
+        svgRule.uses.clear();
+        svgRule
+            .test(/\.svg$/)
+            .use('svg-sprite-loader')
+            .loader('svg-sprite-loader')
+            .options({
+                symbolId: 'icon-[name]'
+            });
+    },
+    // configureWebpack: {
+    //     resolve: {
+    //         alias: {
+    //             assets: '@/assets',
+    //             components: '@/components',
+    //             views: '@/views'
+    //         }
+    //     }
+    // },
     css: {
         extract: true,
         sourceMap: false,

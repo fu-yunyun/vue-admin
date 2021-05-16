@@ -1,0 +1,7 @@
+全局组件的定义：
+在js中定义全局组件
+vue.component ("组件名称" ,"组件对象")
+组件对象可抽取： xxx.vue
+在vue中定义组件对象
+修改配置文件 
+vue.config.js : runtimercompiler :true

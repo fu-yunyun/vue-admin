@@ -1,0 +1,24 @@
+加密的三种方式：
+    1、base64
+
+    2、md5
+
+    3、sha1
+
+sha1的使用：
+    方法1：
+        1、首先把这个文件放到项目里，我有个utils文件夹，就放这里面了
+        2、然后，需要把sha1.js里的模块exports出来，否则会报错
+        export default {
+        hex_sha1  //只曝露这个就可以了
+        }
+        3、main.js里加入以下代码：
+        // 引入sha1加密算法文件
+        import sha1 from '../utils/sha1'
+        Vue.prototype.sha1 = sha1
+        4、在组件里使用：
+        console.log(that.sha1.hex_sha1('123456'))
+    方法2：
+        1、npm install js-sha1
+        2、在使用的文件处引用 import sha1 from "js-sha1";
+        3、使用 sha1(需要加密的数据)

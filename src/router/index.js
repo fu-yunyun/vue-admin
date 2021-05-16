@@ -2,7 +2,11 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Login from "../views/login/index.vue"
 Vue.use(VueRouter);
-// eslint-disable-next-line
+// 引入布局组件
+// import Layout from "../views/Layout/index.vue"
+// 默认读取index
+import Layout from "../views/Layout"
+
 const routes = [
   {
     path: "/",
@@ -10,6 +14,7 @@ const routes = [
     hidden: true,
     meta: {
       name: "主页"
+
     },
   },
   /*************************************************************************************** */
@@ -30,9 +35,10 @@ const routes = [
     name: "Console",
     redirect: "Index",
     meta: {
-      name: "控制台"
+      name: "控制台",
+      iconName: "console"
     },
-    component: () => import("../views/Layout/index.vue"),
+    component: Layout,
     children: [
       {
         // router-view拿到的是children的第一个对象页面数据，需要跟导航栏中的uri一一对应
@@ -50,9 +56,10 @@ const routes = [
     path: "/info",
     name: "Info",
     meta: {
-      name: "信息管理"
+      name: "信息管理",
+      iconName: "info"
     },
-    component: () => import("../views/Layout/index.vue"),
+    component: Layout,
     children: [
       {
         path: "/infoindex",
@@ -77,8 +84,10 @@ const routes = [
     path: "/user",
     name: "User",
     meta: {
-      name: "用户管理"
+      name: "用户管理",
+      iconName: "user"
     },
+    // Layout
     component: () => import("../views/Layout/index.vue"),
     children: [
       {

@@ -1,0 +1,8 @@
+<router-view />在router路由中会默认读取第一条信息
+
+router中的children属性:
+    在相应的路由页面中如果由router-view，则会读取路由中children的第一条路由页面
+
+导航栏点击局部跳转页面
+    router属性 ：是否使用 vue-router 的模式，启用该模式会在激活导航时以 index 作为 path 进行路由跳转
+    :index="subItem.path"

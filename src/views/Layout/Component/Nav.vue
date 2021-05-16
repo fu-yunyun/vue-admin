@@ -1,5 +1,6 @@
 <template>
   <div id="nav-wrap">
+    <h1 class="logo"><img src="../../../assets/logo.png" alt="" /></h1>
     <el-menu
       default-active="1-4-1"
       class="el-menu-vertical-demo"
@@ -8,14 +9,19 @@
       :collapse="isCollapse"
       background-color="transparent"
       text-color="#fff"
-      router="true"
+      router
     >
       <!-- 在循环的时候，template是不能够被解析的 -->
       <template v-for="(item, index) in routers">
-        <el-submenu :index="index" :key="item.id" v-if="!item.hidden">
+        <!-- item.hidden 隐藏非console的页面选项 -->
+        <el-submenu :index="index + ''" :key="item.id" v-if="!item.hidden">
           <!-- 一级菜单 star-->
           <template slot="title">
-            <i class="el-icon-location"></i>
+            <!-- 全局图标 -->
+            <svg-icon
+              :iconClass="item.meta.iconName"
+              :className="item.meta.iconName"
+            />
             <span slot="title">{{ item.meta.name }}</span>
           </template>
           <!-- 一级菜单 end -->
@@ -83,5 +89,22 @@ export default {
   width: $navMenu;
   height: 100vh;
   background-color: #344a5f;
+  .el-menu {
+    border: 0;
+  }
+  .logo {
+    text-align: center;
+    img {
+      margin: 28px auto 25px;
+      width: 92px;
+      margin-top: 28px;
+    }
+  }
+  svg {
+    font-size: 20px;
+    margin-right: 10px;
+    fill: currentColor;
+    color: #fff;
+  }
 }
 </style>
