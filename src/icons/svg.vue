@@ -34,9 +34,7 @@ export default {
     },
   },
   setup(props) {
-    console.log(props);
-    const msg = ref("全局组件,vue.config.js中的runtimecompiler");
-
+    // const msg = ref("全局组件,vue.config.js中的runtimecompiler");
     const iconName = computed(() => `#icon-${props.iconClass}`);
     const svgClass = computed(() => {
       if (props.className) {
@@ -57,7 +55,7 @@ export default {
     //   count.value = 20;
     // };
     return {
-      msg,
+      // msg,
       //   pluseone,
       iconName,
       svgClass,

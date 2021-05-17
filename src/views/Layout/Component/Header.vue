@@ -36,12 +36,15 @@ export default {
 @import "../../../styles/config.scss";
 #header-wrap {
   position: fixed;
-  left: $navMenu;
   right: 0;
   top: 0;
   height: $layoutHeader;
   background-color: #fff;
   -webkit-box-shadow: 0 3px 16px 0 rgba(0, 0, 0, 0.1);
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -ms-transition: all 0.3s;
+  transition: all 0.3s;
   .header-icon {
     padding: 0 32px;
     svg {
@@ -59,7 +62,7 @@ export default {
       font-size: 22px !important;
     }
     .haiker {
-      margin-right: -10px;
+      margin-right: -20px;
       margin-top: 3px;
     }
   }
@@ -68,6 +71,16 @@ export default {
     padding: 32px 32px;
     font-size: 14px;
     border-right: 1px solid #ededed;
+  }
+}
+.open {
+  #header-wrap {
+    left: $navMenu;
+  }
+}
+.close {
+  #header-wrap {
+    left: $floatWidth;
   }
 }
 </style>

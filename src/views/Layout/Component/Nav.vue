@@ -42,14 +42,7 @@
 </template>
 
 <script>
-import {
-  isRef,
-  reactive,
-  ref,
-  toRefs,
-  onMounted,
-  computed,
-} from "@vue/composition-api";
+import { reactive, computed } from "@vue/composition-api";
 export default {
   name: "nav-warp",
   setup(props, { root }) {
@@ -91,9 +84,12 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
-  width: $navMenu;
   height: 100vh;
   background-color: #344a5f;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -ms-transition: all 0.3s;
+  transition: all 0.3s;
   .el-menu {
     border: 0;
   }
@@ -103,6 +99,7 @@ export default {
       margin: 28px auto 25px;
       width: 92px;
       margin-top: 28px;
+      -webkit-transition: all 0.3s ease 0s;
     }
   }
   svg {
@@ -110,6 +107,24 @@ export default {
     margin-right: 10px;
     fill: currentColor;
     color: #fff;
+  }
+}
+.open {
+  #nav-wrap {
+    width: $navMenu;
+  }
+}
+.close {
+  #nav-wrap {
+    width: $floatWidth;
+  }
+  .logo img {
+    width: 70% !important;
+  }
+}
+.el-menu--vertical {
+  .el-menu-item:hover {
+    background-color: #f56c6c !important;
   }
 }
 </style>
