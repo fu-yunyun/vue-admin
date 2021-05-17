@@ -4,8 +4,6 @@
     <el-menu
       default-active="1-4-1"
       class="el-menu-vertical-demo"
-      @open="handleOpen"
-      @close="handleClose"
       :collapse="isCollapse"
       background-color="transparent"
       text-color="#fff"
@@ -44,7 +42,14 @@
 </template>
 
 <script>
-import { isRef, reactive, ref, toRefs, onMounted } from "@vue/composition-api";
+import {
+  isRef,
+  reactive,
+  ref,
+  toRefs,
+  onMounted,
+  computed,
+} from "@vue/composition-api";
 export default {
   name: "nav-warp",
   setup(props, { root }) {
@@ -57,24 +62,24 @@ export default {
 
     /********************************data数据 star **************************************************** */
 
-    const isCollapse = ref(false);
+    // const isCollapse = ref(false);
+    // 拿到通过header点击之后更改的isCollpase值，通过此值来决定是否显示或者折叠导航栏
+    const isCollapse = computed(() => root.$store.state.isCollapse);
 
     /********************************data数据 end **************************************************** */
 
     /********************************方法的定义 star ************************************************** */
-    const handleOpen = (key, keyPath) => {
-      console.log(key, keyPath);
-    };
-    const handleClose = (key, keyPath) => {
-      console.log(key, keyPath);
-    };
 
     /********************************方法的定义 end ************************************************** */
+
+    // 取出strore中存储的数据
+    // console.log(root.$store.state.isCollapse);
+    // console.log(root.$store.getters.count);
+    // 调用store中的函数更改state中的值
+    // root.$store.commit("SET_COUNT", 100);
     return {
       isCollapse,
       routers,
-      handleOpen,
-      handleClose,
     };
   },
 };

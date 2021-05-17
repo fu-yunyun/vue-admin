@@ -1,7 +1,7 @@
 <template>
   <div id="header-wrap">
     <!-- 左 -->
-    <div class="pull-left header-icon">
+    <div class="pull-left header-icon" @click="navMenuState">
       <svg-icon iconClass="menu" className="menu" />
     </div>
     <div class="pull-right">
@@ -19,7 +19,17 @@
 </template>
 
 <script>
-export default {};
+export default {
+  name: "header-wrap",
+  setup(props, { root }) {
+    const navMenuState = () => {
+      root.$store.commit("SET_COLLAPSE");
+    };
+    return {
+      navMenuState,
+    };
+  },
+};
 </script>
 
 <style lang="scss" scoped>
