@@ -460,8 +460,9 @@ let {a,b:8,c} = aa();
         password: sha1(ruleForm.password),
         code: ruleForm.code,
       };
-
-      Login(requestData)
+      // vuex 请求登录接口
+      root.$store
+        .dispatch("login", requestData)
         .then((response) => {
           let data = response.data;
           // 信息弹窗 提示登录成功
@@ -475,6 +476,21 @@ let {a,b:8,c} = aa();
           root.$message.error(error.message);
           console.log("登录失败");
         });
+      // 传统登录接口
+      // Login(requestData)
+      //   .then((response) => {
+      //     let data = response.data;
+      //     // 信息弹窗 提示登录成功
+      //     root.$message({
+      //       message: data.message,
+      //       type: "success",
+      //     });
+      //   })
+      //   .catch((error) => {
+      //     // 信息弹窗，提示登录失败
+      //     root.$message.error(error.message);
+      //     console.log("登录失败");
+      //   });
     };
 
     // 生命周期 挂载

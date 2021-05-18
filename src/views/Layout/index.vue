@@ -17,7 +17,7 @@ export default {
   components: { LayoutHeader, LayoutMain, LayoutNav },
   setup(props, { root }) {
     const isCollapse = computed(() => {
-      return root.$store.state.isCollapse;
+      return root.$store.state.app.isCollapse;
     });
     return {
       isCollapse,

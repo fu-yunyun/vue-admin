@@ -1,1 +1,24 @@
 vuex:
+vuex: store.js  or  story/index.js
+导入依赖
+npm install vuex --save
+
+vuex类似于中转站，实现两个组件之间的信息传输 即为共享管理状态
+它采用集中式存储管理应用的所有组件的状态，并以相应的规则保证状态以一种可预测的方式发生变化。
+
+数据类型类似于vue
+Mutation 同步处理方法
+
+action 异步处理方法
+action实现同步处理方法 action {
+    调用mutation中的方法
+    action中方法默认第一个参数为store的实例
+    eg:
+    SETMenuStatus(content, state) {
+        第一个参数为store实例，第二个为传入的参数
+        console.log(content.state)
+        console.log(data)
+    }
+}
+action异步触发 root.$store.dispatch("方法名",参数)
+

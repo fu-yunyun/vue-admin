@@ -57,7 +57,7 @@ export default {
 
     // const isCollapse = ref(false);
     // 拿到通过header点击之后更改的isCollpase值，通过此值来决定是否显示或者折叠导航栏
-    const isCollapse = computed(() => root.$store.state.isCollapse);
+    const isCollapse = computed(() => root.$store.state.app.isCollapse);
 
     /********************************data数据 end **************************************************** */
 
