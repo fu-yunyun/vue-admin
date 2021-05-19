@@ -1,0 +1,10 @@
+token的使用需要安装cookie_js
+token类似一个temp值，用于记录登录状态
+                       
+                        未登录 ---> 进入后台未检测token值  ---> 跳转会登录界面
+用户 ---> 登录页面 --->         
+                        登录  ---> 进入后台检测到token值正常 ---> 接口1 、接口2
+                                                     异常 ---> 跳转至登录页面
+
+                        后台验证 router/premit.js
+                        utils/app.js 获取token

@@ -99,6 +99,7 @@
   </div>
 </template>
 <script>
+import { getToKen, setToKen, setUserName, getUserName } from "../../utils/app";
 // 引入加密sha1
 import sha1 from "js-sha1";
 // 引入拦截器 获取默认暴漏，不需要{}
@@ -113,7 +114,14 @@ import {
 } from "@/utils/validate";
 
 // 引用reactive
-import { isRef, reactive, ref, toRefs, onMounted } from "@vue/composition-api";
+import {
+  isRef,
+  reactive,
+  ref,
+  toRefs,
+  onMounted,
+  set,
+} from "@vue/composition-api";
 export default {
   name: "login",
 
@@ -389,30 +397,36 @@ let {a,b:8,c} = aa();
         if (valid) {
           // 当按钮为注册时  请求注册
           if (model.value == "register") {
-            root.$message({
-              type: "success",
-              message: "注册成功，赶紧去登录吧",
-            });
+            register();
+            //应该放在register成功之后 跳转登录
             // 跳转至登录
             toggleMenu(menuTab[0]);
-            console.log("注册成功");
-            // register();
           } // 当按钮为登录时，请求登录接口
           else {
-            root.$message({
-              type: "success",
-              message: "恭喜你登录成功",
-            });
-            console.log("登录成功");
             // login();
-            // 跳转页面至控制台 路由跳转
+
+            // 以下内容应该放在拦截器的Login的then当中 star
+            let requestData = {
+              username: ruleForm.username,
+              // sha1密码加密
+              password: sha1(ruleForm.password),
+              code: ruleForm.code,
+            };
+            // 存储cookie值，设置路由防卫
+            setToKen("admin_token");
+            setUserName(requestData.username);
+            // 设置共享存储状态
+            root.$store.commit("SET_TOKEN", "admin_token");
+            root.$store.commit("SET_USERNAME", requestData.username);
+            // end
+
+            // 跳转页面至控制台 路由跳转  应该放在login的方法中
             root.$router.push({
               name: "Console",
               params: {
                 // uri传递参数，刷新会消失  query不会消失
               },
             });
-
             console.log("页面跳转成功 --- > 控制台");
           }
         } else {

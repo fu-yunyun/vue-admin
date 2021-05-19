@@ -9,9 +9,9 @@
       <div class="header-icon pull-left haiker">
         <svg-icon iconClass="haiker" className="haiker" />
       </div>
-      <div class="user-info pull-left">管理员</div>
+      <div class="user-info pull-left">{{ username }}</div>
       <!-- 右 -->
-      <div class="header-icon pull-left">
+      <div class="header-icon pull-left" @click="exit">
         <svg-icon iconClass="exit" className="exit" />
       </div>
     </div>
@@ -19,14 +19,28 @@
 </template>
 
 <script>
+import { computed } from "@vue/composition-api";
 export default {
   name: "header-wrap",
   setup(props, { root }) {
     const navMenuState = () => {
       root.$store.commit("SET_COLLAPSE");
     };
+    const username = computed(() => {
+      return root.$store.state.login.username;
+    });
+    const exit = () => {
+      // 为了回调 转换页面 在vuex中返回promise可以链式调用
+      root.$store.dispatch("exit").then(() => {
+        root.$router.push({
+          name: "Login",
+        });
+      });
+    };
     return {
       navMenuState,
+      username,
+      exit,
     };
   },
 };
