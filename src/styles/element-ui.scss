@@ -9,3 +9,15 @@
 .el-submenu.is-opened .el-submenu__title{
 background-color: #f56c6c !important;
 }
+div.el-table {
+    td,th {
+    text-align: center ;
+}
+th {
+    font-weight: bold;
+    color: #3445af;
+}
+td {
+    font-size: 14px;
+}
+}
