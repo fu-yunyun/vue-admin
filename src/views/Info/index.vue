@@ -104,7 +104,7 @@
     <!-- ****************************************************底部分页*********************************** -->
     <el-row>
       <el-col :span="12">
-        <el-button size="medium">批量操作</el-button>
+        <el-button size="medium" @click="delAll">批量操作</el-button>
       </el-col>
       <el-col :span="12">
         <el-pagination
@@ -185,26 +185,23 @@ export default {
       dialog_info.value = false;
     };
     const del = () => {
-      root
-        .$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-          center: true,
-        })
-        .then(() => {
-          root.$message({
-            type: "success",
-            message: "删除成功!",
-          });
-        })
-        .catch(() => {
-          root.$message({
-            type: "info",
-            message: "已取消删除",
-          });
-        });
+      root.confirm({
+        content: "确认删除当前信息? 确认后将无法恢复",
+        trip: "警告",
+        fn: confirmDel,
+        msg: "msg",
+      });
     };
+    // 删除全部
+    const delAll = () => {
+      root.confirm({
+        content: "确认删除选中的信息？确认后将无法恢复",
+      });
+    };
+    const confirmDel = (msg) => {
+      console.log(msg);
+    };
+
     return {
       // ref
       category_data,
@@ -219,6 +216,8 @@ export default {
       change_dialog_info,
       close,
       del,
+      delAll,
+      confirmDel,
     };
   },
 };
