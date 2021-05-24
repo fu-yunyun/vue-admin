@@ -21,4 +21,13 @@ action实现同步处理方法 action {
     }
 }
 action异步触发 root.$store.dispatch("方法名",参数)
+mutation同步触发 root.$store.commit()
 
+vuex开启名命控件 ：
+                1、加上属性：namespaced: true 
+                调用的时候在方法名前加上 模块名称 例如 在login模块中
+                 root.$store.commit("login/SET_USERNAME");
+                2、在获取属性时，如果数据在模块中 数据的获取也需要加上模块名
+                root.$store.state.login.属性名
+
+                $store 是vuex中的方法，在store中引入vuex 并且注册为插件，在main.js中引入store，所以vuex也是全局引用

@@ -12,7 +12,7 @@ const app = {
         // },
         SET_COLLAPSE(state) {
             state.isCollapse = !state.isCollapse
-            // console.log(state.isCollapse)
+            console.log(state.isCollapse)
 
             // 本地存储 sessionStorage 临时存储 关闭浏览器时清除
             sessionStorage.setItem("isCollapse", JSON.stringify(state.isCollapse))

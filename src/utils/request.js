@@ -25,6 +25,8 @@ service.interceptors.request.use(function (config) {
     // config拿到的是GetSms()全部数据，在数据请求服务器之前进行处理
     // 在请求头，后台需要前端传输什么数据(在请求头添加参数)
 
+    //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // 在登录token验证完成之后，其他页面请求接口时还可能token验证是否异常，此时需要在请求头传入
     config.headers.tokey = '11111';
     config.headers['username'] = 'toney'
 

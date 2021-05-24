@@ -4,7 +4,7 @@ import store from "../store/index"
 
 // 定义白名单：不需要进行token验证即可跳转页面 例如进入登录页面
 const whiteRouter = ["/login"]
-// 守卫路由 路由跳转执行
+// 守卫路由 路由跳转执行   全局路由构造函数，判断是否登录和要跳转到页面
 router.beforeEach((to, from, next) => {
     if (getToKen()) {
         if (to.path == "/login") {

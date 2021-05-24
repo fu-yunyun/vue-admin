@@ -1,6 +1,6 @@
 import { MessageBox } from 'element-ui';
 import { ref, } from "@vue/composition-api";
-// 使用时引入该文件 涌入golbal文件  const {str, confirm} = global()
+// 使用时引入该文件 golbal文件  const {str, confirm} = global()
 export function global() {
     const str = ref("");
     const confirm = (data) => {
