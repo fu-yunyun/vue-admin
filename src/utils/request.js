@@ -16,7 +16,7 @@ const service = axios.create({
     //http://localhost:8081/api/  ==  http://www.web-jshtml.cn/productapi/api/
     // 相当于 http://localhost:8081/api  变成了http://www.web-jshtml.cn/productapi
     baseURL: BASEURL,
-    timeout: 15000
+    timeout: 3000
 });
 
 // Add a request interceptor  请求拦截器
@@ -27,14 +27,13 @@ service.interceptors.request.use(function (config) {
 
     //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // 在登录token验证完成之后，其他页面请求接口时还可能token验证是否异常，此时需要在请求头传入
-    config.headers.tokey = '11111';
-    config.headers['username'] = 'toney'
+    // config.headers.tokey = '11111';
+    // config.headers['username'] = 'toney'
 
     // console.log(config.headers)
     return config;
 }, function (error) {
     // Do something with request error
-
     return Promise.reject(error);
 });
 
@@ -43,16 +42,13 @@ service.interceptors.response.use(function (response) {
     // Do something with response data
     // response.data 拿到的是服务器响应的数据，对响应的数据进行处理
     // 一切数据由后台封装response
+    // console.log("**********request.js************")
     let data = response.data;
-    if (data.rescode != 0) {
-        // 数据有问题
-        return Promise.reject(data);
+    if (data.code == 200) {
+        return Promise.resolve(data)
     } else {
-        // 数据无误
-        Message.error(data.message);
-        return Primise.resolve;
+        return Promise.reject(data)
     }
-    return response;
 }, function (error) {
     // Do something with response error
     return Promise.reject(error);

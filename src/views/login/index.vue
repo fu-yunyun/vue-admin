@@ -99,12 +99,11 @@
   </div>
 </template>
 <script>
-import { getToKen, setToKen, setUserName, getUserName } from "../../utils/app";
 // 引入加密sha1
 import sha1 from "js-sha1";
 // 引入拦截器 获取默认暴漏，不需要{}
 // import service from "@/utils/request";
-import { GetSms, Register, Login } from "@/api/login";
+import { GetSms, Register } from "@/api/login";
 // 引入js文件
 import {
   stripscript,
@@ -114,14 +113,7 @@ import {
 } from "@/utils/validate";
 
 // 引用reactive
-import {
-  isRef,
-  reactive,
-  ref,
-  toRefs,
-  onMounted,
-  set,
-} from "@vue/composition-api";
+import { reactive, ref, onMounted } from "@vue/composition-api";
 export default {
   name: "login",
 
@@ -242,6 +234,7 @@ let {a,b:8,c} = aa();
     // 登录按钮禁用状态
     const loginButtonStatus = ref(true);
 
+    const sms = ref();
     // // 验证码按钮状态
     // const codeButtonStatus = ref(false);
 
@@ -359,13 +352,15 @@ let {a,b:8,c} = aa();
         .then((response) => {
           // 执行此处函数的是Promise.resolve
           // 验证码发送成功 信息弹窗
-          let data = response.data;
+          // console.log(response.data.sms);
           root.$message({
-            message: data.message,
+            message: response.msg + "  您的验证码为 ： " + response.data.sms,
             type: "success",
           });
+          countDown(20);
           // 由于特殊原因，请求成功的操作未能完成，所以请求成功后的操作使请求失败继续进行
           //调定时器 倒计时
+          // 更新获取验证码状态
           // 启用登录或者注册按钮
           loginButtonStatus.value = false;
         })
@@ -376,10 +371,13 @@ let {a,b:8,c} = aa();
           // 由于特殊原因，请求成功的操作未能完成，所以请求成功后的操作使请求失败继续进行
           // 调定时器 倒计时
           // 启用登录或者注册按钮
-          loginButtonStatus.value = false;
-          countDown(20);
+
           root.$message.error(error.message);
-          console.log("获取验证码失败");
+          // 更新获取验证码状态
+          updateCodeButton({
+            status: false,
+            text: "重新发送",
+          });
         });
 
       //   // 启用登录或者注册按钮
@@ -403,31 +401,7 @@ let {a,b:8,c} = aa();
             toggleMenu(menuTab[0]);
           } // 当按钮为登录时，请求登录接口
           else {
-            // login();
-
-            // 以下内容应该放在拦截器的Login的then当中 star
-            let requestData = {
-              username: ruleForm.username,
-              // sha1密码加密
-              password: sha1(ruleForm.password),
-              code: ruleForm.code,
-            };
-            // 存储cookie值，设置路由防卫
-            setToKen("admin_token");
-            setUserName(requestData.username);
-            // 设置共享存储状态
-            root.$store.commit("SET_TOKEN", "admin_token");
-            root.$store.commit("SET_USERNAME", requestData.username);
-            // end
-
-            // 跳转页面至控制台 路由跳转  应该放在login的方法中
-            root.$router.push({
-              name: "Console",
-              params: {
-                // uri传递参数，刷新会消失  query不会消失
-              },
-            });
-            console.log("页面跳转成功 --- > 控制台");
+            login();
           }
         } else {
           console.log("error submit!!");
@@ -443,17 +417,17 @@ let {a,b:8,c} = aa();
       let requestData = {
         username: ruleForm.username,
         //加密密码
-        password: sha1(ruleForm.password),
+        password: ruleForm.password,
         code: ruleForm.code,
         module: "register",
+        sms: ruleForm.code,
       };
       // 请求注册接口
       Register(requestData)
         .then((response) => {
-          let data = response.data;
           // 信息弹窗 提示注册成功
           root.$message({
-            message: data.message,
+            message: response.msg,
             type: "success",
           });
           // 注册成功,自动跳转至登录按钮
@@ -461,7 +435,8 @@ let {a,b:8,c} = aa();
         })
         .catch((error) => {
           // 信息弹窗，提示注册失败
-          root.$message.error(error.message);
+          console.log(error.msg);
+          root.$message.error(error.msg);
           console.log("注册失败");
         });
     };
@@ -471,23 +446,32 @@ let {a,b:8,c} = aa();
       let requestData = {
         username: ruleForm.username,
         // sha1密码加密
-        password: sha1(ruleForm.password),
+        password: ruleForm.password,
         code: ruleForm.code,
+        sms: ruleForm.code,
       };
       // vuex 请求登录接口
       root.$store
         .dispatch("login", requestData)
         .then((response) => {
-          let data = response.data;
+          // 跳转页面至控制台 路由跳转  应该放在login的方法中
+          root.$router.push({
+            name: "Console",
+            params: {
+              // uri传递参数，刷新会消失  query不会消失
+            },
+          });
+          // console.log("页面跳转成功 --- > 控制台");
           // 信息弹窗 提示登录成功
+          // console.log(response.msg);
           root.$message({
-            message: data.message,
+            message: response.msg,
             type: "success",
           });
         })
         .catch((error) => {
           // 信息弹窗，提示登录失败
-          root.$message.error(error.message);
+          root.$message.error(error.msg);
           console.log("登录失败");
         });
       // 传统登录接口
@@ -512,6 +496,7 @@ let {a,b:8,c} = aa();
 
     // 数据返回
     return {
+      sms,
       menuTab,
       ruleForm,
       rules,

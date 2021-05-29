@@ -3,7 +3,7 @@
     <el-row :gutter="14">
       <el-col :span="4">
         <div class="label-warp category">
-          <label for=""> 类型:</label>
+          <label for=""> 类别:</label>
           <div class="warp-content">
             <el-select
               v-model="category_data"
@@ -11,10 +11,10 @@
               style="width: 100%"
             >
               <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                v-for="items in options.item"
+                :key="items.id"
+                :label="items.categoryName"
+                :value="items.id"
               >
               </el-option>
             </el-select>
@@ -83,7 +83,7 @@
     </el-row>
     <div class="space-30"></div>
     <!-- *************************************表格数据********************************************** -->
-    <el-table :data="tableData" border style="width: 100%">
+    <el-table :data="tableData.item" border style="width: 100%">
       <el-table-column type="selection" width="50"> </el-table-column>
       <el-table-column prop="title" label="标题" width="620"> </el-table-column>
       <el-table-column prop="category" label="类别" width="100">
@@ -109,8 +109,11 @@
       <el-col :span="12">
         <el-pagination
           background
-          layout="total,prev, pager, next"
-          :total="1000"
+          @size-change="sizeChange"
+          @current-change="currentChange"
+          layout="total,sizes,prev, pager, next"
+          :total="total"
+          :page-sizes="[5, 10, 20, 50]"
         >
         </el-pagination>
       </el-col>
@@ -118,72 +121,102 @@
     <!-- ***********************************************新增弹窗***************************************** -->
     <!-- 含逻辑更改时不易采用  -->
     <!-- 增加修饰器 :flag.sync="dialog_info"  不需要再调用close方法 -->
-    <Diginfo :flag="dialog_info" @close="close" />
+    <Diginfo :flag="dialog_info" @close="close" :category="options.item" />
   </div>
 </template>
 
 <script>
-import { reactive, ref } from "@vue/composition-api";
+import { onMounted, reactive, ref, watch } from "@vue/composition-api";
 import Diginfo from "./infoComponents/index.vue";
+import { common } from "../../api/common";
+import { getList_api } from "@/api/news";
 export default {
   name: "infoIndex",
   // 注册组件
   components: { Diginfo },
   setup(props, { root }) {
+    /*****************************基本数据定义********************************************** */
     const dialog_info = ref(false);
     const category_data = ref("");
     const data_value = ref("");
     const input = ref("");
-    const options = reactive([
-      {
-        value: "选项1",
-        label: "黄金糕",
-      },
-      {
-        value: "选项2",
-        label: "双皮奶",
-      },
-      {
-        value: "选项3",
-        label: "蚵仔煎",
-      },
-    ]);
-    const tableData = reactive([
-      {
-        title: "纽约市市长白思豪宣布退出总统竞选 特朗普发推特回应",
-        category: "国内信息",
-        date: "2016-05-02",
-        user: "管理员",
-      },
-      {
-        title: "纽约市市长白思豪宣布退出总统竞选 特朗普发推特回应",
-        category: "国内信息",
-        date: "2016-05-02",
-        user: "管理员",
-      },
-      {
-        title: "纽约市市长白思豪宣布退出总统竞选 特朗普发推特回应",
-        category: "国内信息",
-        date: "2016-05-02",
-        user: "管理员",
-      },
-      {
-        title: "纽约市市长白思豪宣布退出总统竞选 特朗普发推特回应",
-        category: "国内信息",
-        date: "2016-05-02",
-        user: "管理员",
-      },
-    ]);
+    const total = ref(100);
+    const { getInfoCategory, category } = common();
+
+    /* *******************************************对象数据定义 ******************************/
+    const options = reactive({
+      item: [],
+    });
+    const tableData = reactive({
+      item: [
+        {
+          title: "纽约市市长白思豪宣布退出总统竞选 特朗普发推特回应",
+          category: "国内信息",
+          date: "2016-05-02",
+          user: "管理员",
+        },
+        {
+          title: "纽约市市长白思豪宣布退出总统竞选 特朗普发推特回应",
+          category: "国内信息",
+          date: "2016-05-02",
+          user: "管理员",
+        },
+        {
+          title: "纽约市市长白思豪宣布退出总统竞选 特朗普发推特回应",
+          category: "国内信息",
+          date: "2016-05-02",
+          user: "管理员",
+        },
+        {
+          title: "纽约市市长白思豪宣布退出总统竞选 特朗普发推特回应",
+          category: "国内信息",
+          date: "2016-05-02",
+          user: "管理员",
+        },
+      ],
+    });
     const formInline = reactive({
       user: "",
       region: "",
     });
+    // 页面显示初始数据
+    const page = reactive({
+      pageNumber: 1,
+      pageSize: 5,
+    });
+    /**********************************  获取列表数据  ************************************** */
+    const getList = () => {
+      // 定义获取列表数据请求数据
+      let requestData = {
+        categoryId: 1,
+        startTime: "2019-12-12 12:00:00",
+        endTime: "2019-12-12 12:00:00",
+        title: "标题",
+        id: 12, //信息id
+        pageNumber: page.pageNumber, // 当前位置
+        pageSize: page.pageSize, // 当前页面显示条数
+      };
+      getList_api(requestData)
+        .then((response) => {
+          // 将数据库中信息赋值给本地
+          tableData.item = response.item;
+          // 更新总页码
+          total.value = response.total;
+          console.log("获取列表信息成功");
+        })
+        .catch((error) => {
+          console.log("获取列表信息失败");
+        });
+    };
+    /******************************  打开弹窗  ******************************************** */
     const change_dialog_info = () => {
       dialog_info.value = true;
     };
+    /*****************************  关闭弹窗   ******************************************* */
     const close = () => {
       dialog_info.value = false;
     };
+    /************************* 删除信息提示 ************************************************ */
     const del = () => {
       root.confirm({
         content: "确认删除当前信息? 确认后将无法恢复",
@@ -192,6 +225,7 @@ export default {
         msg: "msg",
       });
     };
+    /**************************************************************************************** */
     // 删除全部
     const delAll = () => {
       root.confirm({
@@ -201,23 +235,56 @@ export default {
     const confirmDel = (msg) => {
       console.log(msg);
     };
-
+    /************************************页码更改function********************************* */
+    // 每页显示条数改变
+    const sizeChange = (val) => {
+      page.pageSize = val;
+      getList();
+      console.log("size Change -----  " + val);
+    };
+    // 页码发生改变时
+    const currentChange = (val) => {
+      page.pageNumber = val;
+      getList();
+      console.log("current Change ----  " + val);
+    };
+    /*********************************生命周期 onmount *********************************** */
+    onMounted(() => {
+      // 获取分类标题
+      getInfoCategory();
+      // 获取列表信息
+      getList();
+      console.log(total.value);
+    });
+    /******************************function 定义 ***************************************** */
+    //监听数据 获取分类
+    watch(
+      () => category.item,
+      (value) => {
+        options.item = value;
+      }
+    );
+    /*******************************************数据返回******************************** */
     return {
       // ref
       category_data,
       data_value,
       input,
       dialog_info,
+      total,
       //   reactive
       options,
       formInline,
       tableData,
+      page,
       // function
       change_dialog_info,
       close,
       del,
       delAll,
       confirmDel,
+      sizeChange,
+      currentChange,
     };
   },
 };

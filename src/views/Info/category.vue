@@ -1,6 +1,10 @@
 <template>
   <div id="category">
-    <el-button type="danger" @click="CancleTwoCate">添加一级分类</el-button>
+    <el-button
+      type="danger"
+      @click="CancleTwoCate({ button_type: 'category_first_add' })"
+      >添加一级分类</el-button
+    >
     <div class="hr"><hr /></div>
     <el-row :gutter="30">
       <el-col :span="8">
@@ -10,21 +14,38 @@
             v-for="(item, index) in category.item"
             :key="index"
           >
+            <!-- 一级分类 -->
             <h4>
               <svg-icon iconClass="add" className="add" />{{
-                item.category_Name
+                item.categoryName
               }}
               <div class="button-group">
-                <el-button size="mini" type="danger" round> 编辑 </el-button>
+                <el-button
+                  size="mini"
+                  type="danger"
+                  round
+                  @click="
+                    editCategory({
+                      categoryName: item.categoryName,
+                      id: item.id,
+                      button_type: 'category_first_modify',
+                    })
+                  "
+                >
+                  编辑
+                </el-button>
                 <el-button size="mini" type="success" round>
                   添加子级
                 </el-button>
-                <el-button size="mini" round> 删除 </el-button>
+                <el-button size="mini" round @click="deleteCategory(item.id)">
+                  删除
+                </el-button>
               </div>
             </h4>
+            <!-- 二级分类 -->
             <ul v-if="item.children">
               <li v-for="(childrenItem, index) in item.children" :key="index">
-                {{ childrenItem.category_Name }}
+                {{ childrenItem.categoryName }}
                 <div class="button-group">
                   <el-button size="mini" type="danger" round> 编辑 </el-button>
                   <el-button size="mini" round> 删除 </el-button>
@@ -39,10 +60,16 @@
           <h4>一级分类编辑</h4>
           <el-form label-width="142px" class="w410">
             <el-form-item label="一级分类名称:">
-              <el-input v-model="form.category_Name"></el-input>
+              <el-input
+                v-model="form.categoryName"
+                :disabled="categoty_first_disabled"
+              ></el-input>
             </el-form-item>
             <el-form-item label="二级分类名称:" v-if="TwoCateStatus">
-              <el-input v-model="form.setcategory_Name"></el-input>
+              <el-input
+                v-model="form.setcategoryName"
+                :disabled="categoty_childred_disabled"
+              ></el-input>
             </el-form-item>
             <el-form-item>
               <el-button
@@ -50,6 +77,7 @@
                 size="mini"
                 @click="submit"
                 :loading="isLoading"
+                :disabled="submit_button_disabled"
                 >确定</el-button
               >
             </el-form-item>
@@ -61,77 +89,115 @@
 </template>
 
 <script>
-import { addCategory, getCategory } from "../../api/news";
-import { onMounted, reactive, ref } from "@vue/composition-api";
+import { addCategory, delteCategory_api, EditCategory } from "../../api/news";
+import { onMounted, reactive, ref, watch } from "@vue/composition-api";
+import { common } from "@/api/common.js";
 export default {
-  setup(props, { root, refs }) {
+  setup(props, { root }) {
     // 基本数据类型
     const TwoCateStatus = ref(true);
     const isLoading = ref(false);
+    const categoty_first_disabled = ref(true);
+    const categoty_childred_disabled = ref(true);
+    const submit_button_disabled = ref(true);
+    const deleteId = ref();
+    const submit_button_type = ref();
+    const currentId_modify = ref();
     // 对象数据类型 ********************************************************************************************
     // input 框中内容
     const form = reactive({
-      category_Name: "",
-      setcategory_Name: "",
+      categoryName: "",
+      setcategoryName: "",
     });
     // 加载自定义初始数据
-    const MyCategory = reactive({
-      id: "0",
-      category_Name: "默认初始一级标题",
-      children: [
-        {
-          id: "0",
-          category_Name: "默认初始二级标题,暂无数据",
-        },
-      ],
-    });
+    // const MyCategory = reactive({
+    //   id: "0",
+    //   categoryName: "默认一级标题",
+    //   children: [],
+    // });
     // 响应数据 结构
     const category = reactive({
       item: [],
     });
+    // const arr = reactive({
+    //   ii: [],
+    // });
     // function ************************************************************************************************
-
+    const { category: categoryItem, getInfoCategory } = common();
     // 生命周期 元素加载完成 接口请求未能完成
     onMounted(() => {
       // 获取服务器响应分类数据 其实就是将数据以正确的格式封住响应过来  == 自定义数据
-      getCategory()
-        .then((response) => {
-          let data = response.data.data;
-          category.item = data;
-        })
-        .catch((error) => {
-          root.$message.error("目的：获取一级分类请求失败");
-        });
-      // 自定义数据类型 + 数据
-      category.item.push(MyCategory);
+      getInfoCategory();
+      // 自定义数据类型 + 数据  本地存储实现
+      // category.item.push(MyCategory);
+      // if (cookie.get("data")) {
+      //   const temp_data = JSON.parse(cookie.get("data")).ii;
+      //   temp.value = temp_data.length;
+      //   for (let i = 0; i < temp_data.length; i++) {
+      //     arr.ii.push(temp_data[i]);
+      //   }
+      //   for (let j = 0; j < temp_data.length; j++) {
+      //     category.item.push(JSON.parse(cookie.get("" + temp_data[j])));
+      //   }
+      // }
     });
-
-    const CancleTwoCate = () => {
+    // 监听 获取分类中的信息
+    watch(
+      () => categoryItem.item,
+      (value) => {
+        category.item = value;
+      }
+    );
+    //添加一级分类  修改输入框的可输入状态;
+    const CancleTwoCate = (data) => {
+      // 更改输入框及提交按钮状态
+      categoty_first_disabled.value = false;
+      submit_button_disabled.value = false;
+      // 二级输入框隐藏
       TwoCateStatus.value = false;
+      submit_button_type.value = data.button_type;
     };
-
-    // 提交一级分类请求 接口请求未能完成
-    const submit = () => {
-      if (form.category_Name == "") {
+    /*********************************请求添加一级分类标题+编辑************************************************ */
+    const category_first_add = () => {
+      if (form.categoryName == "") {
         root.$message.warning("一级分类不能为空");
         return false;
       }
       // 更改按钮状态
       isLoading.value = true;
-      // 渲染增添数据 自定义 start ***********************************************************************************
-      const item = {
-        id: "0",
-        category_Name: form.category_Name,
-        children: [],
-      };
-      category.item.push(item);
-      // 重置表单
-      form.category_Name = "";
-      // end  ****************************************************************************************************
-      addCategory({ category_Name: "admin" })
+      // 自定义temp数据充当临时 id
+      // temp.value = temp.value + 1;
+      // 定义数据类型;
+      // const item = {
+      //   id: "",
+      //   categoryName: form.categoryName,
+      //   children: [],
+      // };
+      // category.item.push(item);
+      /***************************************** */
+      // 本地存储实现数据的保存
+      // 将存入数据的id存入数组当中;
+      // arr.ii.push(item.id);
+      // 将数组存入cookie中
+
+      /* 选取对象中的数组的重要性
+         !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+         因为在cookie中存入数据是会自动转换成字符串，字符串会带有存入数据的原本样式，更改极为麻烦
+         对象中的数组的好处原因是 ： JSON有将字符串型的对象转化成对象 ，所以在cookie中存入数据后可以通过转换拿到对象，对象中就可以直接拿到数组
+       */
+      // cookie.set("data", JSON.stringify(arr));
+      //自定义数据的存储,实现  数据的多存储，分类存储 会占用浏览器大量内存，但是关闭浏览器就会清除 cookie本地存储
+      // cookie.set("" + item.id, JSON.stringify(item));
+      /***************************************** */
+      // 调用接口
+
+      addCategory({ categoryName: form.categoryName })
         .then((response) => {
-          let data = response.data.data;
-          if (data.resCode === 0) {
+          let data = response.data;
+          // 将返回的对象放入数组中
+          category.item.push(data);
+
+          if (response.code === 200) {
             root.$message({
               message: "一级分类请求成功,信息添加成功",
               type: "success",
@@ -139,24 +205,160 @@ export default {
             // 在此处重新请求接口 ，实时更新数据 确定：多次请求服务器，消耗资源
             // getCategory();
             // 实时更新优化：在输入数据时将数据放入获取的数据格式中
+            isLoading.value = false;
+            // 重置表单
+            form.categoryName = "";
           }
         })
         .catch((error) => {
-          root.$message.error("一级分类请求失败");
+          root.$message.error(error.msg);
           isLoading.value = false;
+          // 重置表单
+          form.categoryName = "";
         });
     };
-    //********************************************************************************************************* */
+    /***********************************     编辑    ************************************************ */
+    const category_first_modify = () => {
+      if (form.categoryName == "") {
+        root.$message({
+          message: "未选择分类",
+          type: "warning",
+        });
+        currentId_modify.value = "";
+      } else if (currentId_modify.value == "") {
+        root.$message({
+          message: "请选中分类并单击编辑进行修改",
+          type: "warning",
+        });
+      } else {
+        // console.log(currentId_modify.value + " ---------" + form.categoryName);
+        let requestData = {
+          id: currentId_modify.value,
+          categoryName: form.categoryName,
+        };
+        EditCategory(requestData)
+          .then((response) => {
+            root.$message({
+              message: "修改成功",
+              type: "success",
+            });
+            let data = category.item.filter(
+              (item) => item.id == currentId_modify.value
+            );
+            data[0].categoryName = response.data.categoryName;
+            // 清空输入框
+            form.categoryName = "";
+          })
+          .catch((error) => {
+            root.$message.error("修改失败");
+            // 清空输入框
+            form.categoryName = "";
+            currentId_modify.value = "";
+          });
+      }
+    };
+    /*************************一级标题请求添加 + 编辑 end   *************************************** */
+    const submit = () => {
+      if (submit_button_type.value == "category_first_add") {
+        category_first_add();
+      } else if (submit_button_type.value == "category_first_modify") {
+        category_first_modify();
+      }
+    };
+    /**************************一级标题删除 start ************************************************************* */
+    // 触发删除 提示
+    const deleteCategory = (category_id) => {
+      deleteId.value = category_id;
+      // 引用全局方法 确定是否删除
+      root.confirm({
+        content: "确定删除当前信息，确认后将无法恢复!",
+        trip: "警告",
+        fn: confirmDel, //回调确定删除方法
+        catchfn: catchfn,
+        // 给回调函数传入参数
+        // msg: category_id,
+      });
+    };
+
+    /********************* 取消删除回调函数********************************* */
+    const catchfn = () => {
+      // 取消删除，清除id
+      deleteId.value = "";
+    };
+    /************************确定删除 回调函数************************** */
+    const confirmDel = () => {
+      // 请求删除一级分类接口   通过id删除数据 自定义删除id，无需传入参数
+      delteCategory_api({ id: deleteId.value })
+        .then((response) => {
+          // 方法一 ：
+          // 数组操作实时渲染页面
+          //splice(指定起始位置，删除个数，替换的数据):
+          // 两个参数的时候是删除
+          // 三个参数的时候是替换、插入
+
+          // 通过删除的id查找元素在数组中的位置下标
+          let index = category.item.findIndex(
+            (item) => item.id == deleteId.value
+          );
+          category.item.splice(index, 1);
+          // 过滤数组 过滤掉删除的id和数组内数据id相同的数据，即得到删除id之外的数据组成一个新的数组
+          // let newData = category.item.filter((item) => item.id != deleteId.value);
+          // category.item = newData;
+
+          // 方法二 ；  重新调用getCategory()渲染页面  重新请求服务，占用资源
+          console.log(response.msg);
+          if (response.code == 200) {
+            root.$message({
+              message: response.msg,
+              type: "success",
+            });
+          }
+        })
+        .catch((error) => {
+          let index = category.item.findIndex(
+            (item) => item.id == deleteId.value
+          );
+          category.item.splice(index, 1);
+          root.$message.error(error.msg);
+        });
+    };
+    //*************************************一级标题删除请求  end  ******************************************** */
+    /***************************************修改一级标题  start ********************************************* */
+    // 修改一级分类   输入框的可输入状态 ，确定按钮的执行类型
+    const editCategory = (data) => {
+      categoty_childred_disabled.value = true;
+      categoty_first_disabled.value = false;
+      submit_button_disabled.value = false;
+      // 二级输入框隐藏
+      TwoCateStatus.value = false;
+      // 填入输入框默认值
+      form.categoryName = data.categoryName;
+      // 修改提交操作的类型
+      submit_button_type.value = data.button_type;
+      // 导出id
+      currentId_modify.value = data.id;
+    };
     return {
       // 基本数据
       TwoCateStatus,
       isLoading,
+      currentId_modify,
+      // temp,
+      deleteId,
+      submit_button_type,
+      // 输入框及提交按钮状态
+      categoty_first_disabled,
+      categoty_childred_disabled,
+      submit_button_disabled,
       // 对象数据
       form,
       category,
       // function
       CancleTwoCate,
       submit,
+      deleteCategory,
+      confirmDel,
+      editCategory,
     };
   },
 };

@@ -10,16 +10,14 @@ export default {
                 center: true,
             })
                 .then(() => {
-                    // data.fn && data.fn();
-                    if (data.fn) {
-                        data.fn(data.msg);
-                    }
+                    data.fn && data.fn(data.msg || "");
+                    // if (data.fn) {
+                    //     data.fn(data.msg || "");
+                    // }
                 })
                 .catch(() => {
-                    // root.$message({
-                    //     type: "info",
-                    //     message: "已经取消删除"
-                    // })
+                    data.catchfn && data.catchfn();
+                    console.log("取消删除")
                 });
         }
     }

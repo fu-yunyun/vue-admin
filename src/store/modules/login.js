@@ -1,6 +1,6 @@
 
 import { Login } from "@/api/login"
-import { getUserName, removeToKen, removeUserName } from "../../utils/app.js"
+import { getUserName, removeToKen, removeUserName, setToKen, setUserName } from "../../utils/app.js"
 const login = {
     state: {
         username: getUserName() || "",
@@ -25,7 +25,7 @@ const login = {
             return new Promise((resolve, reject) => {
                 Login(requestData).then((response) => {
                     // 查看后台返回数据
-                    // console.log(response)
+                    // console.log("********login.js********")
                     // // 获取后台相应的数据data对象
                     // let data = response.data.data
                     // // 设置共享管理状态
@@ -34,6 +34,15 @@ const login = {
                     // // 将username和token存入cookie 数据请求不成功 未能执行
                     // setToKen(state.token)
                     // setUserName(state.username)
+
+                    // 存储cookie值，设置路由防卫
+                    setToKen("admin_token");
+                    setUserName(requestData.username);
+                    // 设置共享存储状态
+                    commit("SET_TOKEN", "admin_token");
+                    commit("SET_USERNAME", requestData.username);
+                    // end
+                    console.log(response)
                     resolve(response)
                 }).catch(error => {
                     reject(error)
