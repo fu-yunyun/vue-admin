@@ -75,6 +75,16 @@ const routes = [
           name: "信息分类"
         },
         component: () => import("../views/Info/category.vue"),
+      },
+      // 详情信息页面，默认不显示 点击按钮跳转
+      {
+        path: "/detailCategory",
+        name: "detailCategory",
+        hidden: true,
+        meta: {
+          name: "信息详情"
+        },
+        component: () => import("../views/Info/infoComponents/detailCategory.vue"),
       }
     ]
   },

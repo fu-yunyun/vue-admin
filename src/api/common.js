@@ -13,6 +13,7 @@ export function common() {
             category.item = data;
         }).catch(error => {
             // root.$message.error("目的：获取一级分类请求失败");
+            console.log(error.msg)
         })
     }
     return {
