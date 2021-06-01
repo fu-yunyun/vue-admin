@@ -23,6 +23,7 @@ export default {};
   // border: 30px solid #f7f7f7;
   // border-bottom: 0;
 }
+
 .main-content {
   width: 100%;
   height: 100%;
