@@ -110,6 +110,9 @@
           >
           <el-button type="success" size="mini" @click="editInfo(scope.row)"
             >编辑</el-button
+          >
+          <el-button type="success" size="mini" @click="editInfo(scope.row)"
+            >编辑详情</el-button
           ></template
         >
       </el-table-column>
