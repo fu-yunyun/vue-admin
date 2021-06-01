@@ -13,7 +13,8 @@ export default {};
 <style lang="scss" scoped>
 @import "../../../styles/config.scss";
 #main-wrap {
-  height: 100vh;
+  // 此处不用百分比是因为 百分比基于父元素显示，没有指定高度的时候由内容撑起高度
+  height: 115vh; //可视区被缩减至90%
   // position: fixed;
   // top: 75px;
   // left: $navMenu;

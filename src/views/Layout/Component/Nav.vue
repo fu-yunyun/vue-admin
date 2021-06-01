@@ -83,7 +83,7 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
-  height: 100vh;
+  bottom: 0;
   background-color: #344a5f;
   -webkit-transition: all 0.3s;
   -moz-transition: all 0.3s;

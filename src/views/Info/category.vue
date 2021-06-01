@@ -34,7 +34,17 @@
                 >
                   编辑
                 </el-button>
-                <el-button size="mini" type="success" round>
+                <el-button
+                  size="mini"
+                  type="success"
+                  round
+                  @click="
+                    addChildrenCategory_status({
+                      button_type: 'addChildrenCategory',
+                      data: item,
+                    })
+                  "
+                >
                   添加子级
                 </el-button>
                 <el-button size="mini" round @click="deleteCategory(item.id)">
@@ -47,8 +57,26 @@
               <li v-for="(childrenItem, index) in item.children" :key="index">
                 {{ childrenItem.categoryName }}
                 <div class="button-group">
-                  <el-button size="mini" type="danger" round> 编辑 </el-button>
-                  <el-button size="mini" round> 删除 </el-button>
+                  <el-button
+                    size="mini"
+                    type="danger"
+                    round
+                    @click="
+                      editChilrenCategory_status({
+                        data: childrenItem,
+                        button_type: 'category_chilren_edit',
+                      })
+                    "
+                  >
+                    编辑
+                  </el-button>
+                  <el-button
+                    size="mini"
+                    round
+                    @click="delateChildenCategory(childrenItem)"
+                  >
+                    删除
+                  </el-button>
                 </div>
               </li>
             </ul>
@@ -89,7 +117,14 @@
 </template>
 
 <script>
-import { addCategory, delteCategory_api, EditCategory } from "../../api/news";
+import {
+  addCategory,
+  delteCategory_api,
+  EditCategory,
+  addChilrenCategory,
+  deleteChilrenCategory_api,
+  editChilrenCategory_api,
+} from "../../api/news";
 import { onMounted, reactive, ref, watch } from "@vue/composition-api";
 import { common } from "@/api/common.js";
 export default {
@@ -118,6 +153,24 @@ export default {
     // 响应数据 结构
     const category = reactive({
       item: [],
+      // current: [
+      //   {
+      //     categoryName: "sad",
+      //     id: 1,
+      //     children: [
+      //       {
+      //         categoryName: "sa",
+      //         id: 1,
+      //       },
+      //     ],
+      //   },
+      // ],
+    });
+    // 定义子级数据请求
+    const requestData_ChildrenCategory = reactive({
+      categoryName: "",
+      parentId: undefined,
+      id: undefined,
     });
     // const arr = reactive({
     //   ii: [],
@@ -217,8 +270,100 @@ export default {
           form.categoryName = "";
         });
     };
-    /***********************************     编辑    ************************************************ */
+    /**************************************删除子级标题******************************************** */
+    const delateChildenCategory = (data) => {
+      requestData_ChildrenCategory.id = data.id;
+      requestData_ChildrenCategory.parentId = data.parentId;
+      root.confirm({
+        content: "确定删除当前信息，确认后将无法恢复!",
+        trip: "警告",
+        fn: confirmDelChildrenCategory, //回调确定删除方法
+        catchfn: catchfn,
+        // 给回调函数传入参数
+        // msg: category_id,
+      });
+    };
+    const confirmDelChildrenCategory = () => {
+      deleteChilrenCategory_api(requestData_ChildrenCategory)
+        .then((response) => {
+          root.$message.success(response.msg);
+          getInfoCategory();
+        })
+        .catch((error) => {
+          root.$message.error(error.msg);
+        });
+    };
+    /*************************************编辑子级分类 状态变更******************************************** */
+    const editChilrenCategory_status = (data) => {
+      requestData_ChildrenCategory.id = data.data.id;
+      requestData_ChildrenCategory.parentId = data.data.parentId;
+      // 填充编辑输入框内容
+      form.setcategoryName = data.data.categoryName;
+      // 更改输入框状态和提交按钮状态
+      categoty_childred_disabled.value = false;
+      submit_button_disabled.value = false;
+      submit_button_type.value = data.button_type;
+    };
+    /***********************************编辑子级分类 接口调用 */
+    const editChilrenCategory = () => {
+      requestData_ChildrenCategory.categoryName = form.setcategoryName;
+      if (form.setcategoryName == "") {
+        root.$message.warning("输入内容不能为空");
+        return false;
+      } else {
+        editChilrenCategory_api(requestData_ChildrenCategory)
+          .then((response) => {
+            root.$message.success(response.msg);
+            getInfoCategory();
+          })
+          .catch((error) => {
+            root.$message.warning(error.msg);
+          });
+      }
+    };
+    /*************************************添加子级分类 输入框状态更改******************************* */
+    const addChildrenCategory_status = (data) => {
+      // 更改输入框状态
+      categoty_first_disabled.value = true;
+      categoty_childred_disabled.value = false;
+      submit_button_disabled.value = false;
+      TwoCateStatus.value = true;
+      form.categoryName = data.data.categoryName;
+      // 设置按钮执行类型
+      submit_button_type.value = data.button_type;
+      // 获取一级目录id
+      requestData_ChildrenCategory.parentId = data.data.id;
+    };
+    /*************************************添加子级接口请求***************************************** */
+    const addChildrenCategory = () => {
+      if (form.setcategoryName == "") {
+        root.$message({
+          message: "子级输入不能为空",
+          type: "warning",
+        });
+      } else {
+        // 填充子级目录
+        requestData_ChildrenCategory.categoryName = form.setcategoryName;
+        addChilrenCategory(requestData_ChildrenCategory)
+          .then((response) => {
+            root.$message({
+              message: response.msg,
+              type: "success",
+            });
+            // 重新请求页面
+            getInfoCategory();
+            // 清空输入框
+            form.setcategoryName = "";
+          })
+          .catch((error) => {
+            root.$message.error(error.msg);
+            form.setcategoryName = "";
+          });
+      }
+    };
+    /***********************************  一级分类标题编辑    ************************************************ */
     const category_first_modify = () => {
+      isLoading.value = true;
       if (form.categoryName == "") {
         root.$message({
           message: "未选择分类",
@@ -248,21 +393,28 @@ export default {
             data[0].categoryName = response.data.categoryName;
             // 清空输入框
             form.categoryName = "";
+            isLoading.value = false;
           })
           .catch((error) => {
             root.$message.error("修改失败");
             // 清空输入框
             form.categoryName = "";
             currentId_modify.value = "";
+            isLoading.value = false;
           });
       }
+      isLoading.value = false;
     };
-    /*************************一级标题请求添加 + 编辑 end   *************************************** */
+    /*************************submit*************************************** */
     const submit = () => {
       if (submit_button_type.value == "category_first_add") {
         category_first_add();
       } else if (submit_button_type.value == "category_first_modify") {
         category_first_modify();
+      } else if (submit_button_type.value == "addChildrenCategory") {
+        addChildrenCategory();
+      } else if (submit_button_type.value == "category_chilren_edit") {
+        editChilrenCategory();
       }
     };
     /**************************一级标题删除 start ************************************************************* */
@@ -307,12 +459,10 @@ export default {
 
           // 方法二 ；  重新调用getCategory()渲染页面  重新请求服务，占用资源
           console.log(response.msg);
-          if (response.code == 200) {
-            root.$message({
-              message: response.msg,
-              type: "success",
-            });
-          }
+          root.$message({
+            message: response.msg,
+            type: "success",
+          });
         })
         .catch((error) => {
           let index = category.item.findIndex(
@@ -353,12 +503,18 @@ export default {
       // 对象数据
       form,
       category,
+      requestData_ChildrenCategory,
       // function
       CancleTwoCate,
       submit,
       deleteCategory,
       confirmDel,
       editCategory,
+      addChildrenCategory,
+      addChildrenCategory_status,
+      delateChildenCategory,
+      editChilrenCategory_status,
+      editChilrenCategory,
     };
   },
 };

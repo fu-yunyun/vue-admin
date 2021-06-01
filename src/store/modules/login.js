@@ -42,7 +42,6 @@ const login = {
                     commit("SET_TOKEN", "admin_token");
                     commit("SET_USERNAME", requestData.username);
                     // end
-                    console.log(response)
                     resolve(response)
                 }).catch(error => {
                     reject(error)

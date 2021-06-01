@@ -10,10 +10,10 @@ export default {
                 center: true,
             })
                 .then(() => {
-                    data.fn && data.fn(data.msg || "");
-                    // if (data.fn) {
-                    //     data.fn(data.msg || "");
-                    // }
+                    // data.fn && data.fn(data.msg || "");
+                    if (data.fn) {
+                        data.fn(data.msg || "");
+                    }
                 })
                 .catch(() => {
                     data.catchfn && data.catchfn();

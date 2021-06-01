@@ -9,8 +9,9 @@
  */
 
  html {
-    line-height: 1.15; /* 1 */
+    line-height: 1; /* 1 */
     -webkit-text-size-adjust: 100%; /* 2 */
+    zoom:90%;
   }
   
   /* Sections
@@ -22,7 +23,7 @@
 
   body {
     margin: 0;
-    font-size: 15px;
+ 
   }
   
   /**

@@ -513,8 +513,9 @@ let {a,b:8,c} = aa();
 <style lang="scss" scoped>
 #login {
   // vh:基于可视区的百分比
-  height: 100vh;
+  height: 100vh; // 此处不用百分比是因为 百分比基于父元素显示，没有指定高度的时候由内容撑起高度
   background-color: #373e70;
+  zoom: 115%;
 }
 .login-warp {
   width: 330px;

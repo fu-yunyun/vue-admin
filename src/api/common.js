@@ -12,7 +12,7 @@ export function common() {
             let data = response.data.allCtg;
             category.item = data;
         }).catch(error => {
-            root.$message.error("目的：获取一级分类请求失败");
+            // root.$message.error("目的：获取一级分类请求失败");
         })
     }
     return {

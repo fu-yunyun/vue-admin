@@ -1,7 +1,7 @@
 <template>
   <div id="DigInfo">
     <el-dialog
-      title="新增"
+      :title="title"
       :visible.sync="dialog_info_flag"
       @close="close"
       @open="openDialog"
@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { addCategory_api } from "../../../api/news";
+import { addCategory_api, getList_api, editInfo_api } from "../../../api/news";
 import { onMounted, reactive, ref, watch } from "@vue/composition-api";
 export default {
   name: "DigInfo",
@@ -60,17 +60,28 @@ export default {
       type: Array,
       default: () => [],
     },
+    type: {
+      type: String,
+      default: "",
+    },
+    id: {
+      type: Number,
+      default: 1,
+    },
   },
 
   setup(props, { emit, root }) {
+    const title = ref();
     const formLabelWidth = ref("70px");
     const dialog_info_flag = ref(false);
+    const editCategoryId = ref();
     const form = reactive({
       category: [],
       title: "",
       content: "",
       region: "",
     });
+
     /********************************function********************************************************* */
     // 子传父是单项数据流
     const close = () => {
@@ -83,7 +94,36 @@ export default {
     };
     //  因为执行顺序的原因 页面初始加载不能直接拿到数据 可以等页面打开之后再获取数据
     const openDialog = () => {
+      // 设置弹窗标题执行类型
+      title.value = props.type;
       form.category = props.category;
+      // 格式化编辑界面数据
+      /******************************************************************************************************* */
+      if (title.value == "编辑") {
+        let requestData = {
+          pageNumber: 1,
+          pageSize: 1,
+          id: props.id,
+        };
+        getList_api(requestData)
+          .then((response) => {
+            let data = response.data.item[0];
+            // 获取编辑数据的分类id 为请求编辑数据准备
+            editCategoryId.value = data.categoryId;
+            // form中的category数组中的id技术categoryId
+            let categorydata = form.category.filter(
+              (category) => category.id == data.categoryId
+            )[0];
+            form.region = categorydata.categoryName;
+            form.title = data.title;
+            form.content = data.content;
+            console.log("编辑请求");
+          })
+          .catch((error) => {
+            console.log("edit error");
+          });
+      }
+      /********************************************************************************************************* */
     };
 
     // 清除新增表单数据
@@ -92,28 +132,75 @@ export default {
       form.content = "";
       form.region = "";
     };
+    /****************************************数据接口提交******************************************** */
     const submit = () => {
+      if (title.value == "新增") {
+        AddInfo();
+      } else {
+        editInfo();
+      }
+    };
+    /****************************************新增数据****************************************************** */
+    const AddInfo = () => {
       if (form.title && form.region && form.content) {
-        console.log("submit方法提交");
         // 定义新增请求数据
         let requestData = {
           category: form.region,
           title: form.title,
           content: form.content,
         };
-        AddInfo(requestData);
+        //调用新增接口
+        addCategory_api(requestData)
+          .then((response) => {
+            root.$message({
+              message: response.msg,
+              type: "success",
+            });
+            // 调用父组件方法
+            emit("getList");
+            dialog_info_flag.value = false;
+            resetFields();
+          })
+          .catch((error) => {
+            root.$message({
+              message: error.msg,
+              type: "error",
+            });
+            resetFields();
+          });
       } else {
         root.$message.warning("表单数据不能有空");
       }
     };
-    const AddInfo = (requestData) => {
-      addCategory_api(requestData)
+    /**************************************************编辑数据********************************************* */
+    const editInfo = () => {
+      // 定义编辑请求数据
+      let requestData = {
+        id: props.id,
+        categoryId: editCategoryId.value,
+        title: form.title,
+        content: form.content,
+      };
+      // 调用编辑接口
+      editInfo_api(requestData)
         .then((response) => {
-          console.log("数据请求添加成功");
+          dialog_info_flag.value = false;
+          console.log("数据编辑成功");
+          // 渲染数据
+          /**
+           * 两种方式： 1、直接接口刷新
+           *           2、返回列表，手动修改数据
+           */
+          // 调用父组件方法
+          emit("getList");
+
+          // 调用父组件方法
+          // emit("name", { function: "getList", data: 111 });
+
           resetFields();
         })
         .catch((error) => {
-          console.log("数据请求添加失败");
+          console.log("数据编辑失败");
           resetFields();
         });
     };
@@ -131,6 +218,8 @@ export default {
     return {
       formLabelWidth,
       dialog_info_flag,
+      title,
+      editCategoryId,
       // object
       form,
       //function
@@ -138,6 +227,7 @@ export default {
       openDialog,
       submit,
       resetFields,
+      editInfo,
     };
   },
 };
