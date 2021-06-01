@@ -1,0 +1,26 @@
+全局注册，多文件调用 （注册） only
+export default {
+    install(Vue,options) {
+        Vue.prototype.xxx = () => {
+            console.log("Plugin Text")
+        }
+    }
+}
+
+以下使用需要引用 *****************************************************************************
+
+定义单独方法 ，调用时需要引入
+export function xxx(value) {
+    let reg  =/^[a-z0-9]{6}$/;
+    return !reg.text(value) ? true :false;
+}
+
+Vue 3.0 方法
+export function global () {
+    cosnt a= ()=> {};
+    const b= ()=> {};
+    rerurn {
+        a,b
+    }
+    }
+}

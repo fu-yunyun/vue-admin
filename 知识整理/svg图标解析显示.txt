@@ -1,0 +1,52 @@
+第一步：
+    在定义全局组件中的js文件中解析svg文件
+    // require.context： 读取指定目录所有文件
+    /* 第一个参数： 目录
+    第二个参数：是否遍历子级目录
+    第三个参数：定义遍历文件规则 */
+
+    const req = require.context("./svg", false, /\.svg/)   //正则中表示结尾，读取结尾为.svg的文件
+    const requireAll = requireContext => {
+        //解析 拿到的是文件名称 console.svg
+        return requireContext.keys().map(requireContext)
+    }
+    requireAll(req)
+
+第二步：
+    在组件对象中设置组件模板
+    <template>
+    <svg :class="svgClass" aria-hidden="true">
+        <use :xlink:href="iconName"></use>
+    </svg>
+    </template>
+    在vue实例中通过props获取来自父组件的数据 svgClass iconName
+
+第三步：
+    通过iconfont下载svg文件
+
+第四步：
+    配置vue.config.js文件
+    chainWebpack: config => {
+        // config.resolve.alias
+        //     .set('@', resolve('src')) //3.0的写法 映射路径 @代表src 比如要写一个图片 <img src='@/assets/img/1.jpg'/>就会读取src下assets下img下的图片
+        const svgRule = config.module.rule('svg');
+        svgRule.uses.clear();
+        svgRule
+            .test(/\.svg$/)
+            .use('svg-sprite-loader')
+            .loader('svg-sprite-loader')
+            .options({
+                symbolId: 'icon-[name]'
+            });
+    },
+
+第五步：
+    依赖:
+        npm install svg-sprite-loader -D 或 yarn add svg-sprite-loader -D
+
+第六步：
+    在main.js中引入 icons文件
+
+第七步：
+    使用定义的全局组件
+    eg： <svg-icon iocnClass="" className="">

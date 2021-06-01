@@ -1,0 +1,20 @@
+// 为了避免更改样式一改就改很多处的情况，添加样式配置
+
+// 后台框架尺寸
+// 菜单宽度
+$navMenu:250px;
+$layoutHeader:75px;
+$floatWidth:64px;
+@mixin labelDom ($align,$width,$line-height) {
+    label {
+        float: left;  
+        text-align: $align;
+        width: $width + px;
+        line-height: $line-height + px;
+     
+    }
+    .warp-content  {
+        margin-left: $width + px;
+    }
+   
+}

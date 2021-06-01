@@ -1,0 +1,30 @@
+main.js
+// 定义白名单：不需要进行token验证即可跳转页面 例如进入登录页面
+const whiteRouter = ["/login"]
+// 守卫路由 路由跳转执行
+router.beforeEach((to, from, next) => {
+    if (getToKen()) {
+        console.log("token存在")
+    } else {
+        // 判断是否未白名单路由
+        // to.path 获取跳转页面的路由
+        if (whiteRouter.indexOf(to.path) != -1) {
+            next();
+        } else {
+            next("/login");
+        }
+        // 跳转至登录界面
+        console.log("token不存在")
+
+    }
+    console.log(to)  //下一个页面   到...页面
+    console.log(from) //上一个页面  从...页面
+    console.log(next)
+    next()  // to
+    //token
+})
+
+    步骤：
+        1、第一次路由跳转执行beforeEach，判断是否token正常，如果是，则顺利next跳转，如果否，则执行第二步
+        2、判断白名单，如果是，则next执行跳转，如果否，则next路由指向login，再次beforeEach
+        3、白名单判断存在执行next，无参数不再beforeEach

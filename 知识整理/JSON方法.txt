@@ -1,0 +1,5 @@
+const str = ref('{"name":"asd","title":"asdas"}')
+将字符串转换为对象(注意：JSON的对象转换，内属性需要双引号)
+const json = reactive(JSON.parse(str.value))
+将对象转换为字符串
+str = JSON.stringfy

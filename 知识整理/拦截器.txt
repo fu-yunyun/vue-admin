@@ -1,0 +1,87 @@
+第一步：
+    定义拦截器 request.js:
+    创建service实例 service = anxios.create({
+     baseURL:"",
+    timeout:number
+    });
+    
+    Add a request interceptor  请求拦截器
+    service.interceptors.request.use(function (config) {
+    Do something before request is sent
+    config拿到的是GetSms()全部数据，在数据请求服务器之前进行处理
+    在请求头，后台需要前端传输什么数据(在请求头添加参数)
+    config.headers.tokey = '11111';
+    config.headers['username'] = 'toney'
+    return config;
+    }, function (error) {
+    Do something with request error
+    return Promise.reject(error);
+    });
+
+   响应拦截器
+    service.interceptors.response.use(function (response) {
+    Do something with response data
+    response.data 拿到的是服务器响应的数据，对响应的数据进行处理
+    一切数据由后台封装response
+    let data = response.data;
+    if (data.rescode != 0) {
+        数据有问题
+        return Promise.reject(data);
+    } else {
+        数据无误
+        Message.error(data.message);
+        return Primise.resolve;
+    }
+    return response;
+    }, function (error) {
+    // Do something with response error
+    return Promise.reject(error);
+    });
+
+    将创建的service暴露 export default service;
+
+第二步:
+    API,请求地址 api.js
+    获取到request.js中的service实例 --->引入拦截器
+    封装函数接口,规范请求数据格式
+    export function GetSms(data) {
+    // 返回数据 拿到响应的数据
+    return service.request({
+        method: "post",
+        url: "/getSms/",
+        data
+    });
+}
+
+第三步: 
+    触发调用接口
+    引入所需要的接口
+    import {GetSms,...} from api.js
+    触发调用接口
+
+第四步：
+    处理请求结果
+     const login = () => {
+      let requestData = {
+        username: ruleForm.username,
+        // sha1密码加密
+        password: sha1(ruleForm.password),
+        code: ruleForm.code,
+      };
+
+      Login(requestData)
+        .then((response) => {
+          let data = response.data;
+          // 信息弹窗 提示登录成功
+          root.$message({
+            message: data.message,
+            type: "success",
+          });
+        })
+        .catch((error) => {
+          // 信息弹窗，提示登录失败
+          root.$message.error(error.message);
+          console.log("登录失败");
+        });
+    };
+
