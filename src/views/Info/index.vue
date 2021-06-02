@@ -95,10 +95,10 @@
         prop="categoryId"
         :formatter="toCategory"
         label="类别"
-        width="100"
+        width="110"
       >
       </el-table-column>
-      <el-table-column prop="createTime" label="日期" width="200">
+      <el-table-column prop="createTime" label="日期" width="190">
       </el-table-column>
       <el-table-column prop="admin" label="管理员" width="115">
       </el-table-column>
@@ -197,7 +197,7 @@ export default {
       let categorydata = options.item.filter(
         (item) => item.id == row.categoryId
       )[0];
-      return categorydata.categoryName;
+      if (categorydata) return categorydata.categoryName;
     };
     /**********************************搜索 *********************************************** */
     const search = () => {
@@ -293,7 +293,6 @@ export default {
     const handleSelectionChange = (selection) => {
       // 直接映射拿出id
       deleteInfoId.value = selection.map((item) => item.id);
-      console.log(deleteInfoId.value);
     };
     /*****************************************确认删除数据 执行删除接口*************************** */
     const confirmDel = () => {

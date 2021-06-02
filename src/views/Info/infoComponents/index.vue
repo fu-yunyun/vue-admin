@@ -174,10 +174,13 @@ export default {
     };
     /**************************************************编辑数据********************************************* */
     const editInfo = () => {
+      let newData = form.category.filter(
+        (category) => category.categoryName == form.region
+      )[0];
       // 定义编辑请求数据
       let requestData = {
         id: props.id,
-        categoryId: editCategoryId.value,
+        categoryId: newData.id,
         title: form.title,
         content: form.content,
       };
