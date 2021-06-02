@@ -199,6 +199,7 @@ export default {
       )[0];
       return categorydata.categoryName;
     };
+    console;
     /**********************************搜索 *********************************************** */
     const search = () => {
       // console.log(categoryId.value);
