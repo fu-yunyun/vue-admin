@@ -307,6 +307,7 @@ export default {
     /***********************************编辑子级分类 接口调用 */
     const editChilrenCategory = () => {
       requestData_ChildrenCategory.categoryName = form.setcategoryName;
+      console.o;
       if (form.setcategoryName == "") {
         root.$message.warning("输入内容不能为空");
         return false;

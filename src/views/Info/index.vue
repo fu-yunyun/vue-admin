@@ -113,11 +113,17 @@
           >
           <!-- 编辑详情页面 路由跳转 传递参数 url明文可见 router-link to:{name:"",query:{params:"value"}} -->
 
-          <router-link :to="{ name: 'detailCategory', query: { id: 1 } }">
-            <el-button type="success" size="mini" class="detail"
-              >编辑详情
-            </el-button>
-          </router-link>
+          <!-- <router-link
+            :to="{ name: 'detailCategory', params: { id: scope.row.id } }"
+          > -->
+          <el-button
+            type="success"
+            size="mini"
+            class="detail"
+            @click="submit_detail(scope.row)"
+            >编辑详情
+          </el-button>
+          <!-- </router-link> -->
         </template>
       </el-table-column>
     </el-table>
@@ -156,7 +162,7 @@
 </template>
 
 <script>
-import { onMounted, reactive, ref, watch } from "@vue/composition-api";
+import { onMounted, reactive, ref, watch, refs } from "@vue/composition-api";
 import Diginfo from "./infoComponents/index.vue";
 import { common } from "../../api/common";
 import { getList_api, deleteInfo_api } from "@/api/news";
@@ -164,7 +170,7 @@ export default {
   name: "infoIndex",
   // 注册组件
   components: { Diginfo },
-  setup(props) {
+  setup(props, { root }) {
     /*****************************基本数据定义********************************************** */
     const dialog_info = ref(false);
     const categoryId = ref("");
@@ -201,16 +207,17 @@ export default {
     });
     /*************************************路由转发 编辑详情页面***************************** */
     // js跳转 @detailCategory(scope.row) 明文传参
-    // const detailCategory = (row) => {
-    //   root.$router.push({
-    //     name: "detailCategory",
-    //     query(明文) || params(密文): {
-    //       id: row.id,
-    //       title: row.title,
-    //     },
-    //   });
-    // };
+    const submit_detail = (row) => {
+      // 存入vuex
+      root.$store.commit({
+        type: "SET_DETAILID",
+        id: row.id,
+      });
 
+      root.$router.push({
+        name: "detailCategory",
+      });
+    };
     // 密文传参  url路径不会显示 缺点：页面刷新一次参数消失
     /*
     <router-link :to="{name:name,params:{}" />
@@ -393,6 +400,7 @@ export default {
       formatData,
       toCategory,
       getList,
+      submit_detail,
     };
   },
 };

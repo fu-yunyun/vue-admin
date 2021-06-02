@@ -110,6 +110,7 @@ export default {
             let data = response.data.item[0];
             // 获取编辑数据的分类id 为请求编辑数据准备
             editCategoryId.value = data.categoryId;
+
             // form中的category数组中的id技术categoryId
             let categorydata = form.category.filter(
               (category) => category.id == data.categoryId
@@ -117,7 +118,6 @@ export default {
             form.region = categorydata.categoryName;
             form.title = data.title;
             form.content = data.content;
-            console.log("编辑请求");
           })
           .catch((error) => {
             console.log("edit error");
@@ -177,7 +177,7 @@ export default {
       // 定义编辑请求数据
       let requestData = {
         id: props.id,
-        categoryId: editCategoryId.value,
+        categoryId: form.region,
         title: form.title,
         content: form.content,
       };
@@ -185,7 +185,7 @@ export default {
       editInfo_api(requestData)
         .then((response) => {
           dialog_info_flag.value = false;
-          console.log("数据编辑成功");
+          console.log(response.msg);
           // 渲染数据
           /**
            * 两种方式： 1、直接接口刷新
