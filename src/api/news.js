@@ -112,3 +112,12 @@ export function editChilrenCategory_api(data) {
         data
     });
 }
+// 上传图片
+export function upLoad_api(data) {
+    // 返回数据 拿到响应的数据
+    return service.request({
+        method: "post",
+        url: "/upload",
+        data
+    });
+}

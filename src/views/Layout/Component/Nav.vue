@@ -27,12 +27,14 @@
           <!-- 一级子菜单 star-->
           <el-menu-item-group>
             <!-- <span slot="title">分组一</span> -->
-            <el-menu-item
-              :index="subItem.path"
-              v-for="subItem in item.children"
-              :key="subItem.id"
-              >{{ subItem.meta.name }}</el-menu-item
-            >
+            <template v-for="subItem in item.children">
+              <el-menu-item
+                :index="subItem.path"
+                :key="subItem.id"
+                v-if="!subItem.hidden"
+                >{{ subItem.meta.name }}</el-menu-item
+              >
+            </template>
           </el-menu-item-group>
           <!-- 一级子菜单 end -->
         </el-submenu>

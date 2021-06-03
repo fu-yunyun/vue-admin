@@ -90,7 +90,7 @@
       ref="multipleTable"
     >
       <el-table-column type="selection" width="50"> </el-table-column>
-      <el-table-column prop="title" label="标题" width="700"> </el-table-column>
+      <el-table-column prop="title" label="标题" width="600"> </el-table-column>
       <el-table-column
         prop="categoryId"
         :formatter="toCategory"
@@ -110,6 +110,12 @@
           >
           <el-button type="success" size="mini" @click="editInfo(scope.row)"
             >编辑</el-button
+          >
+          <el-button
+            type="success"
+            size="mini"
+            @click="detailCategory(scope.row)"
+            >详细编辑</el-button
           ></template
         >
       </el-table-column>
@@ -197,7 +203,16 @@ export default {
       let categorydata = options.item.filter(
         (item) => item.id == row.categoryId
       )[0];
-      return categorydata.categoryName;
+      if (categorydata) return categorydata.categoryName;
+    };
+    /*******************************详细编辑************************************************* */
+    const detailCategory = (row) => {
+      console.log(row.id);
+      // 提交数据至vuex
+      root.$store.commit("SET_DETAILID", row.id);
+      root.$router.push({
+        name: "detailCategory",
+      });
     };
     /**********************************搜索 *********************************************** */
     const search = () => {
@@ -369,6 +384,7 @@ export default {
       formatData,
       toCategory,
       getList,
+      detailCategory,
     };
   },
 };

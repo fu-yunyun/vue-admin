@@ -48,6 +48,7 @@
 <script>
 import { addCategory_api, getList_api, editInfo_api } from "../../../api/news";
 import { onMounted, reactive, ref, watch } from "@vue/composition-api";
+import categoryVue from "../category.vue";
 export default {
   name: "DigInfo",
 
@@ -172,12 +173,17 @@ export default {
         root.$message.warning("表单数据不能有空");
       }
     };
-    /**************************************************编辑数据********************************************* */
+    /**************************************************编辑数据**************************************** */
     const editInfo = () => {
+      // 拿到categoryId
+      let newData = form.category.filter(
+        (category) => category.categoryName == form.region
+      )[0];
+
       // 定义编辑请求数据
       let requestData = {
         id: props.id,
-        categoryId: editCategoryId.value,
+        categoryId: newData.id,
         title: form.title,
         content: form.content,
       };
