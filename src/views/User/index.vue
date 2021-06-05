@@ -81,6 +81,7 @@ export default {
           pageNumber: 1,
         },
       },
+      // 配置表头数据
       tHead: [
         {
           prop: "email",
@@ -114,6 +115,7 @@ export default {
           columnType: "solt",
         },
       ],
+      // tableData数据可以从组件中进行接口调用获取，则不必再此页面进行数据的初始化，但是获取的tableData属性值需要和tHead中的属性值对应以便表格数据的渲染
       tableData: [
         {
           email: "233@qq.com",

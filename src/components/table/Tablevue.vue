@@ -34,8 +34,11 @@
   </div>
 </template>
 <script>
-import { onBeforeMount, reactive } from "@vue/composition-api";
-import { getUserList_api } from "@/api/news";
+import { onBeforeMount, reactive, watch } from "@vue/composition-api";
+import {
+  loadTableData_fn,
+  tableData_l,
+} from "@/components/table/loadTableData.js";
 
 export default {
   name: "Tablevue",
@@ -51,6 +54,7 @@ export default {
       tHead: [],
       tableData: [],
     });
+    const { loadTableData, tableData_l } = loadTableData_fn();
     const handleSelectionChange = (selection) => {
       // 直接映射拿出id
       deleteInfoId.value = selection.map((item) => item.id);
@@ -69,30 +73,25 @@ export default {
        }
       */
     };
-    // 请求获取用户列表信息
-    const loadData = () => {
-      // 获取来自父组件的获取用户列表请求数据
-      let requestData = props.config.requestJson;
-      getUserList_api(requestData)
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    };
+
     // 挂载前初始化组件数据
     onBeforeMount(() => {
       // 加载数据
-      loadData();
+      loadTableData(props.config.requestJson);
       // 渲染数据
       initTable();
     });
+    watch(
+      () => tableData_l.item,
+      (newData, oldData) => {
+        // 对通过loadTableData加载的接口数据进行监听，将获取的数据赋值给组件进行渲染的数组中
+        tableConfig.tableData = newData;
+      }
+    );
     return {
       tableConfig,
       handleSelectionChange,
       initTable,
-      loadData,
     };
   },
   /* 

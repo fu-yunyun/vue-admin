@@ -66,14 +66,14 @@ export function getCategory() {
 }
 
 // 获取全部分类 （包含子级)
-export function getCategoryAll(data) {
-    // 返回数据 拿到响应的数据
-    return service.request({
-        method: "post",
-        url: "/news/getCategoryAll",
-        data
-    });
-}
+// export function getCategoryAll(data) {
+//     // 返回数据 拿到响应的数据
+//     return service.request({
+//         method: "post",
+//         url: "/news/getCategoryAll",
+//         data
+//     });
+// }
 
 // 修改一级分类
 export function EditCategory(data) {
