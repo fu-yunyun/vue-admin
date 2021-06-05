@@ -69,6 +69,7 @@ export default {
     /*****************************************表格配置数据********************************************** */
     const tableConfig = reactive({
       selection: true,
+      PaginationShow: true,
       // 配置获取用户列表信息接口数据
       requestJson: {
         // 配置接口请求方法
@@ -77,7 +78,7 @@ export default {
         requestUrl: requestUrl_api.getUserList,
         // 配置接口请求数据
         requestData: {
-          pageSzie: 5,
+          pageSize: 5,
           pageNumber: 1,
         },
       },
