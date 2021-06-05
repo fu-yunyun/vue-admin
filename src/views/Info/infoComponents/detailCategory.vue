@@ -98,6 +98,7 @@ export default {
       let newData = form.category.filter(
         (category) => category.id == form.categoryId
       )[0];
+      // console.log(newData);
       if (newData) return newData.categoryName;
     };
     /***********************************编辑接口********************************************* */

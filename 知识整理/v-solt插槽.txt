@@ -1,0 +1,43 @@
+插槽: v-solt 父组件的内容传值给子组件进行显示
+
+插槽的三种方式:
+    匿名插槽: 没有指定某一个，子组件中放置多少个插槽就显示多少个
+    具名插槽: 指定插槽名称，调用时根据插槽名称调用
+    作用域插槽: 可以进行子组件对父组件的通信
+
+    1、匿名插槽
+    子组件代码:
+    <template>
+        <solt> </solt>
+        <solt> </solt>
+    </template>
+    父组件代码:
+    <parent >
+        <template> 123 </template>
+    </parent>
+    子组件显示两个123
+
+    2、具名插槽
+      子组件代码:
+    <template>
+        <solt name="solt1"> </solt>
+        <solt> </solt>
+    </template>
+    父组件代码:
+    <parent >
+        <template v-solt:solt1> 123 </template>
+    </parent>
+    子组件仅显示一个123
+
+    3、作用域插槽
+     子组件代码:
+    <template slot-scope = "scope">   拥有scope可以获取该行整条数据  scope.row
+        <solt name='footer' :aa="title"> </solt>
+    </template>
+    父组件代码:  语法糖： v-solt:name1 == #name1
+    <parent >
+        <template v-solt:solt1="soltData"> 
+        {{ soltData.aa }}
+         </template>
+    </parent>
+    子组件显示两个123

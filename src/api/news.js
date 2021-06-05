@@ -121,3 +121,13 @@ export function upLoad_api(data) {
         data
     });
 }
+
+// 上传图片
+export function getUserList_api(params) {
+    // 返回数据 拿到响应的数据
+    return service.request({
+        method: params.requestMethod || "post",
+        url: params.requestUrl,
+        data: params.requestData || {}
+    });
+}

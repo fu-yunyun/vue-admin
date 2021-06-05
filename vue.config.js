@@ -55,7 +55,7 @@ module.exports = {
     },
     // 所有 webpack-dev-server 的选项都支持。
     devServer: {
-        host: "192.168.1.104",
+        host: "localhost",
         port: 8080, // 端口号
         https: false,
         open: false, //配置自动启动浏览器
@@ -66,7 +66,7 @@ module.exports = {
             "/api": {
                 // target: "https://reactrouter.com/web/guides/quick-start", //配置跨域服务器地址
                 // target: "http://www.web-jshtml.cn/api/",
-                target: " http://192.168.1.105:8082",
+                target: " http://localhost:8082",
                 changeOrigin: true,
                 pathRewrite: {
                     "^/api": "" // 去掉接口地址中的api字符串
