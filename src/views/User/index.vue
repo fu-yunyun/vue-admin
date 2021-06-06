@@ -43,7 +43,7 @@
 <script>
 import { reactive, ref } from "@vue/composition-api";
 import Selectvue from "@/components/select/Select.vue";
-import Tablevue from "@/components/table/Tablevue.vue";
+import Tablevue from "@/components/table/Tablevue2.0.vue";
 import requestUrl_api from "@/api/requestUrl.js";
 export default {
   name: "userIndex",
