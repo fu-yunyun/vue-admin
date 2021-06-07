@@ -23,7 +23,7 @@
         </el-select>
       </el-col>
       <el-col :span="8">
-        <el-select v-model="cityData.areaValue">
+        <el-select v-model="cityData.areaValue" @change="handlerArea">
           <el-option
             v-for="item in cityData.areaData"
             :key="item.area_code"
@@ -36,21 +36,46 @@
   </div>
 </template>
 <script>
-import { onBeforeMount } from "@vue/composition-api";
+import { onBeforeMount, watch } from "@vue/composition-api";
 import { cityPicker_mixin } from "@/mixins/cityPicker.js";
 export default {
   name: "cityPicker",
-  setup() {
-    const { GetProvince, handlerCity, handlerProvince, cityData } =
-      cityPicker_mixin();
+  props: {
+    cityPickerData: {
+      type: Object,
+      default: () => {},
+    },
+  },
+  setup(props, { emit }) {
+    const {
+      GetProvince,
+      handlerCity,
+      handlerProvince,
+      handlerArea,
+      cityData,
+      resultData,
+    } = cityPicker_mixin();
     onBeforeMount(() => {
       GetProvince();
     });
+
+    watch(
+      [
+        () => resultData.provinceValue,
+        () => resultData.cityValue,
+        () => resultData.areaValue,
+      ],
+      ([value1, value2, value3]) => {
+        emit("update:cityPickerData", resultData);
+      }
+    );
+
     return {
       cityData,
       GetProvince,
       handlerProvince,
       handlerCity,
+      handlerArea,
     };
   },
 };

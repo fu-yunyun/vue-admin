@@ -40,6 +40,12 @@ export function cityPicker_mixin() {
             },
         ],
     });
+    // 选中数据 返回给父组件
+    const resultData = reactive({
+        provinceValue: "",
+        cityValue: "",
+        areaValue: "",
+    })
     /**
      * 获取省份数据
      */
@@ -79,6 +85,15 @@ export function cityPicker_mixin() {
                 console.log("area fail");
             });
     };
+    /**
+     * 区地址更改
+     */
+    const handlerArea = () => {
+        result();
+    }
+    /**
+     * 重置地区数据
+     */
     const resetValue = (params) => {
         if (params.type == "province") {
             cityData.cityValue = "";
@@ -97,13 +112,22 @@ export function cityPicker_mixin() {
             cityData[element] = ""
         });
          */
-
+        // 获取更改后的值
+        result();
+    }
+    const result = () => {
+        for (let item in resultData) {
+            resultData[item] = cityData[item]
+        }
     }
     return {
         GetProvince,
         handlerCity,
         handlerProvince,
         resetValue,
+        result,
+        handlerArea,
         cityData,
+        resultData
     }
 }
