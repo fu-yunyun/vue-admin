@@ -26,6 +26,7 @@
       </template>
     </el-table>
     <!-- *******************************************分页****************************************** -->
+    <div class="space-30"></div>
     <el-pagination
       v-if="tableConfig.PaginationShow"
       @size-change="handleSizeChange"
@@ -85,6 +86,9 @@ export default {
 <style scoped lange="scss">
 div.el-table th {
   color: black !important;
+}
+.space-30 {
+  height: 30px;
 }
 </style>
   

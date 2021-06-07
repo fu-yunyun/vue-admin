@@ -48,7 +48,6 @@
 <script>
 import { addCategory_api, getList_api, editInfo_api } from "../../../api/news";
 import { onMounted, reactive, ref, watch } from "@vue/composition-api";
-import categoryVue from "../category.vue";
 export default {
   name: "DigInfo",
 

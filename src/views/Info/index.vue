@@ -207,7 +207,6 @@ export default {
     };
     /*******************************详细编辑************************************************* */
     const detailCategory = (row) => {
-      console.log(row.id);
       // 提交数据至vuex
       root.$store.commit("SET_DETAILID", row.id);
       root.$router.push({

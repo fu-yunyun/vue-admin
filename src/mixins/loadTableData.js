@@ -9,7 +9,6 @@ let loadTableData_mixin = {
             let requestData = this.config.requestJson;
             requestData.requestData.pageSize = this.PageData.pageSize;
             requestData.requestData.pageNumber = this.PageData.currentPage;
-            console.log(this.PageData)  //拿到分页数据     
             // 获取来自父组件的获取用户列表请求数据
             getUserList_api(requestData)
                 .then((response) => {

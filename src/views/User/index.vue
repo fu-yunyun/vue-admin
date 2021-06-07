@@ -15,7 +15,9 @@
         <el-button type="danger" style="width: 100%">搜索</el-button>
       </el-col>
       <el-col :span="12">
-        <el-button type="danger" class="pull-right">添加用户</el-button>
+        <el-button type="danger" class="pull-right" @click="addUser"
+          >添加用户</el-button
+        >
       </el-col>
     </el-row>
     <div class="space-30"></div>
@@ -26,8 +28,8 @@
           active-color="#13ce66"
           inactive-color="#ff4949"
         >
-        </el-switch
-      ></template>
+        </el-switch>
+      </template>
       <template v-slot:operation="slotData">
         <el-button size="mini" type="danger" @click="operation(slotData.data)">
           删除
@@ -37,19 +39,23 @@
         </el-button>
       </template>
     </Tablevue>
+    <!-- ****************************************************************************************** -->
+    <AddUservue :dialog_info_flag.sync="addUserFlag" />
   </div>
 </template>
 
 <script>
 import { reactive, ref } from "@vue/composition-api";
 import Selectvue from "@/components/select/Select.vue";
-import Tablevue from "@/components/table/Tablevue2.0.vue";
+import Tablevue from "@/components/table/Tablevue2.0+mixin.vue";
 import requestUrl_api from "@/api/requestUrl.js";
+import AddUservue from "./addUser.vue";
 export default {
   name: "userIndex",
-  components: { Selectvue, Tablevue },
+  components: { Selectvue, Tablevue, AddUservue },
   setup(props, { root }) {
     const input = ref();
+    const addUserFlag = ref(false);
     const selectConfig = reactive({
       item: [
         {
@@ -134,15 +140,23 @@ export default {
         },
       ],
     });
+    /**
+     * 新增用户
+     */
+    const addUser = () => {
+      addUserFlag.value = true;
+    };
     /*************************************************删除编辑******************************************* */
     const operation = (value) => {
       console.log(value);
     };
     return {
       input,
+      addUserFlag,
       selectConfig,
       tableConfig,
       operation,
+      addUser,
     };
   },
 };
