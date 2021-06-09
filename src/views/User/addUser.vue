@@ -7,14 +7,14 @@
       @open="open"
       @close="close"
     >
-      <el-form :model="data.form" ref="data">
+      <el-form :model="data.form" ref="form">
         <!-- ************************************************************************************** -->
         <el-form-item label="邮箱地址: " :label-width="formLabelWidth">
           <el-input
-            v-model="data.form.email"
+            v-model="data.form.username"
             autocomplete="off"
             placeholder="请输入邮箱地址"
-            prop="email"
+            prop="username"
           ></el-input>
         </el-form-item>
         <!-- ***************************************************************************************** -->
@@ -51,18 +51,18 @@
         </el-form-item>
         <!-- ***************************************************************************************** -->
         <el-form-item label="是否启用: " :label-width="formLabelWidth">
-          <el-radio v-model="data.form.radioValue" label="1">启用</el-radio>
-          <el-radio v-model="data.form.radioValue" label="2">禁用</el-radio>
+          <el-radio v-model="data.form.status" label="0">启用</el-radio>
+          <el-radio v-model="data.form.status" label="1">禁用</el-radio>
         </el-form-item>
         <!-- ***************************************************************************************** -->
         <el-form-item label="角色: " :label-width="formLabelWidth">
           <el-checkbox-group v-model="data.form.role" @change="handlerCheckbox">
             <el-checkbox
-              v-for="items in data.form.roles"
-              :key="items.role"
-              :label="items.value"
-              >{{ items.role }}</el-checkbox
-            >
+              v-for="items in data.roles"
+              :key="items.id"
+              :label="items.role"
+              >{{ items.value }}
+            </el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <!-- ***************************************************************************************** -->
@@ -75,9 +75,9 @@
   </div>
 </template>
 <script>
-import { reactive, ref, watch } from "@vue/composition-api";
+import { onMounted, reactive, ref, watch } from "@vue/composition-api";
 import Citypicker from "../../components/AddUser/cityPicker.vue";
-import { addUser_api, getRole_api, editUser_api } from "@/api/user.js";
+import { addUser_api, editUser_api, getRole_api } from "@/api/user.js";
 export default {
   name: "AddUser",
   components: { Citypicker },
@@ -111,45 +111,49 @@ export default {
      *  弹窗是否开启
      */
     const dialog_User_flag = ref(false);
+
     /**
-     * 输入框值
+     *多选框选中值
      */
+
     // 获取地区地址
 
     const data = reactive({
+      // 地区       // 获取地址 对象类型
+      roles: [
+        {
+          role: "InfoAdmin",
+          value: "信息管理员",
+          id: "1",
+        },
+        {
+          role: "UserAdmin",
+          value: "用户管理员",
+          id: "2",
+        },
+        {
+          role: "SystemAdmin",
+          value: "系统管理员",
+          id: "3",
+        },
+      ],
       form: {
-        email: "",
+        // 角色选中数据
+        role: [],
+        // 角色选项
+
+        username: "",
         password: "",
         phone: "",
         name: "",
-        // 地区       // 获取地址 对象类型
+        checkBoxData: [],
         region: {},
         // 是否启用
-        radioValue: "1",
-        // 角色选中值
-        role: [],
-        // 角色选项
-        roles: [
-          {
-            id: 1,
-            role: "信息管理员",
-            value: "InfoAdmin",
-          },
-          {
-            id: 2,
-            role: "用户管理员",
-            value: "UserAdmin",
-          },
-          {
-            id: 3,
-            role: "系统管理员",
-            value: "SystemAdmin",
-          },
-        ],
+        status: "1",
       },
     });
     const handlerCheckbox = (val) => {
-      console.log(val);
+      data.form.checkBoxData = val;
     };
     /**
      * 添加用户信息提交
@@ -158,8 +162,8 @@ export default {
       if (title.value == "新增用户") {
         // 将数组转换成字符串
         let requestData = JSON.parse(JSON.stringify(data.form));
-        console.log(requestData);
-        addUser_api(data.form)
+
+        addUser_api(requestData)
           .then((response) => {
             console.log(response);
           })
@@ -182,20 +186,12 @@ export default {
      */
     const open = () => {
       if (title.value == "编辑信息") {
-        if (props.checkBoxData) {
-          data.form = props.checkBoxData;
-        }
-      } else {
-        data.form = {};
+        // console.log(props.checkBoxData);
+        // if (props.checkBoxData) data.form = props.checkBoxData;
+        // console.log("*********************************88");
+      } else if ((title.value = "新增用户")) {
+        console.log("add");
       }
-      // 获取用户角色 拿到数据 循环遍历 roleItem: role , name ,id
-      getRole_api()
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log("get role fail");
-        });
     };
     /**
      * 关闭弹窗
@@ -204,7 +200,19 @@ export default {
       dialog_User_flag.value = false;
       emit("update:dialog_info_flag", false);
     };
-
+    /**
+     * 获取角色 初始化角色
+     */
+    onMounted(() => {
+      getRole_api()
+        .then((response) => {
+          // data.form.roles = response
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log("getRole Fail");
+        });
+    });
     /**
      * 弹窗开启表示 数据监听
      */

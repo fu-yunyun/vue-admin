@@ -1,5 +1,5 @@
 // 管理接口请求
 const requestUrl = {
-    getUserList: "/news/getUserList"
+    getUserList: "/getUserList"
 }
 export default requestUrl;

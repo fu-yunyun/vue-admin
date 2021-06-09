@@ -8,11 +8,11 @@ export function loadTableData_fn() {
     }
     // 请求获取用户列表信息
     const loadTableData = (requestData) => {
-        // 获取来自父组件的获取用户列表请求数据
+        // 获取来自父组件的获取用户列表请求数ju 
         getUserList_api(requestData)
             .then((response) => {
                 // 将响应的数据对tableData进行赋值,进行表格数据的初始化
-                console.log(response);
+                console.log("success")
                 // 将获取的pageTotal直接赋值传给PageData.total组件  两两混入，可以直接拿到分页的数据
             })
             .catch((error) => {

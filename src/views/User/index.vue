@@ -35,8 +35,8 @@
           active-color="#13ce66"
           inactive-color="#ff4949"
           @change="handlerSwitch(slotData.data)"
-          active-value="1"
-          inactive-value="2"
+          active-value="0"
+          inactive-value="1"
         >
         </el-switch>
       </template>
@@ -64,7 +64,7 @@
 
 <script>
 import { reactive, ref } from "@vue/composition-api";
-import { delUser_api, searchUser_api, switchUser_api } from "@/api/user.js";
+import { deleteUser_api, searchUser_api, switchUser_api } from "@/api/user.js";
 import Selectvue from "@/components/select/Select.vue";
 import Tablevue from "@/components/table/Tablevue2.0+mixin.vue";
 import requestUrl_api from "@/api/requestUrl.js";
@@ -91,7 +91,7 @@ export default {
         },
         {
           label: "邮箱",
-          value: "eamil",
+          value: "username",
         },
       ],
     });
@@ -114,7 +114,7 @@ export default {
       // 配置表头数据
       tHead: [
         {
-          prop: "email",
+          prop: "username",
           label: "用户名/邮箱",
         },
         {
@@ -146,26 +146,7 @@ export default {
         },
       ],
       // tableData数据可以从组件中进行接口调用获取，则不必再此页面进行数据的初始化，但是获取的tableData属性值需要和tHead中的属性值对应以便表格数据的渲染
-      tableData: [
-        {
-          id: 2,
-          email: "233@qq.com",
-          name: "张三",
-          phone: "13828182912",
-          address: "西安",
-          role: "UserAdmin",
-          status: "1",
-        },
-        {
-          id: 1,
-          email: "233@qq.com",
-          name: "张三",
-          phone: "13828182912",
-          address: "西安",
-          role: "InfoAdmin",
-          status: "2",
-        },
-      ],
+      tableData: [],
       checkBoxData: {},
     });
     /**
@@ -178,6 +159,7 @@ export default {
     };
     const edit = (row) => {
       console.log(row);
+      console.log("*********************edit**********8");
       title.value = "编辑信息";
       tableConfig.checkBoxData = row;
       addUserFlag.value = true;
@@ -197,7 +179,7 @@ export default {
       // console.log(tableListData.value);
 
       // console.log(deleteInfoId.value)
-      if (!tableListData.value || tableListData.value.length == 0) {
+      if (!tableListData.value) {
         root.$message.error("所选数据不能为空");
         return false;
       } else {
@@ -214,7 +196,7 @@ export default {
      * 删除执行
      */
     const confirmDel = () => {
-      delUser_api({ id: deleteInfoId.value })
+      deleteUser_api({ id: deleteInfoId.value })
         .then((response) => {
           deleteInfoId.value = "";
           root.$message({
@@ -235,6 +217,7 @@ export default {
         status: val.status,
         id: val.id,
       };
+      console.log(requestData);
       switchUser_api(requestData)
         .then((response) => {
           console.log(response);

@@ -13,7 +13,9 @@ let loadTableData_mixin = {
             getUserList_api(requestData)
                 .then((response) => {
                     // 将响应的数据对tableData进行赋值,进行表格数据的初始化
-                    console.log(response);
+                    console.log(response.data.users);
+                    this.tableConfig.tableData = response.data.users;
+                    this.PageData.pageTotal = response.data.total
                     // 将获取的pageTotal进行赋值传给table组件 
 
                 })

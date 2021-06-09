@@ -66,7 +66,7 @@ module.exports = {
             "/api": {
                 // target: "https://reactrouter.com/web/guides/quick-start", //配置跨域服务器地址
                 // target: "http://www.web-jshtml.cn/api/",
-                target: " http://localhost:8082",
+                target: " http://192.168.1.103:8082",
                 changeOrigin: true,
                 pathRewrite: {
                     "^/api": "" // 去掉接口地址中的api字符串

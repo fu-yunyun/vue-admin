@@ -6,45 +6,45 @@ export function cityPicker_mixin() {
   */
     const cityData = reactive({
         // 省份选中数据
-        provinceValue: "",
+        provinceId: "",
         // 城市选中数据
-        cityValue: "",
-        areaValue: "",
+        cityId: "",
+        areaId: "",
         // 省份显示数据
         provinceData: [
             {
-                province_code: "123",
-                province_name: "省份",
+                provinceCode: "123",
+                provinceName: "省份",
             },
             {
-                province_code: "13",
-                province_name: "省份1",
+                provinceCode: "13",
+                provinceName: "省份1",
             },
         ],
         // 城市显示数据
         cityData: [
             {
-                city_code: "13",
-                city_name: "城市",
+                cityCode: "13",
+                cityName: "城市",
             },
             {
-                city_code: "12",
-                city_name: "城市1",
+                cityCode: "12",
+                cityName: "城市1",
             },
         ],
         // 区显示数据
         areaData: [
             {
-                area_code: "123",
-                area_name: "区域",
+                areaCode: "123",
+                areaName: "区域",
             },
         ],
     });
     // 选中数据 返回给父组件
     const resultData = reactive({
-        provinceValue: "",
-        cityValue: "",
-        areaValue: "",
+        provinceId: "",
+        cityId: "",
+        areaId: "",
     })
     /**
      * 获取省份数据
@@ -54,6 +54,7 @@ export function cityPicker_mixin() {
         getCityPicker_api({ type: "province" })
             .then((response) => {
                 console.log(response);
+                cityData.provinceData = response.data
             })
             .catch((error) => {
                 console.log("获取省份 fail");
@@ -64,9 +65,9 @@ export function cityPicker_mixin() {
     */
     const handlerProvince = (val) => {
         resetValue({ type: "province" });
-        getCityPicker_api({ type: "city", province_code: val })
+        getCityPicker_api({ type: "city", provinceCode: val })
             .then((response) => {
-                console.log(response);
+                cityData.cityData = response.data
             })
             .catch((error) => {
                 console.log("city fail");
@@ -77,9 +78,9 @@ export function cityPicker_mixin() {
     */
     const handlerCity = (val) => {
         resetValue({ type: "city" })
-        getCityPicker_api({ type: "area", city_code: val })
+        getCityPicker_api({ type: "area", cityCode: val })
             .then((response) => {
-                console.log(response);
+                cityData.areaData = response.data
             })
             .catch((error) => {
                 console.log("area fail");

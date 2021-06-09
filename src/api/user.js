@@ -4,7 +4,7 @@ export function getCityPicker_api(data) {
     // 返回数据 拿到响应的数据
     return service.request({
         method: "post",
-        url: "/user/getCityPicker",
+        url: "/getCityPicker",
         data
     });
 }
@@ -19,22 +19,12 @@ export function addUser_api(data) {
     });
 }
 
-// 获取用户角色信息
-export function getRole_api(data) {
-    // 返回数据 拿到响应的数据
-    return service.request({
-        method: "post",
-        url: "/user/getRole",
-        data
-    });
-}
-
 // 删除用户列表信息
-export function delUser_api(data) {
+export function deleteUser_api(data) {
     // 返回数据 拿到响应的数据
     return service.request({
         method: "post",
-        url: "/user/delUser",
+        url: "/user/deleteUser",
         data
     });
 }
@@ -64,6 +54,18 @@ export function switchUser_api(data) {
     return service.request({
         method: "post",
         url: "/user/switchUser",
+        data
+    });
+}
+
+/**
+ * 获取角色
+ */
+export function getRole_api(data) {
+    // 返回数据 拿到响应的数据
+    return service.request({
+        method: "post",
+        url: "/user/getRole",
         data
     });
 }

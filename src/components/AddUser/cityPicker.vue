@@ -2,33 +2,33 @@
   <div>
     <el-row :gutter="5" class="overflow">
       <el-col :span="8">
-        <el-select v-model="cityData.provinceValue" @change="handlerProvince">
+        <el-select v-model="cityData.provinceId" @change="handlerProvince">
           <el-option
             v-for="item in cityData.provinceData"
-            :key="item.province_code"
-            :value="item.province_code"
-            :label="item.province_name"
+            :key="item.provinceCode"
+            :value="item.provinceCode"
+            :label="item.provinceName"
           ></el-option
         ></el-select>
       </el-col>
       <!-- ****************************************************************** -->
       <el-col :span="8"
-        ><el-select v-model="cityData.cityValue" @change="handlerCity">
+        ><el-select v-model="cityData.cityId" @change="handlerCity">
           <el-option
             v-for="item in cityData.cityData"
-            :key="item.city_code"
-            :value="item.city_code"
-            :label="item.city_name"
+            :key="item.cityCode"
+            :value="item.cityCode"
+            :label="item.cityName"
           ></el-option>
         </el-select>
       </el-col>
       <el-col :span="8">
-        <el-select v-model="cityData.areaValue" @change="handlerArea">
+        <el-select v-model="cityData.areaId" @change="handlerArea">
           <el-option
             v-for="item in cityData.areaData"
-            :key="item.area_code"
-            :value="item.area_code"
-            :label="item.area_name"
+            :key="item.areaCode"
+            :value="item.areaCode"
+            :label="item.areaName"
           ></el-option>
         </el-select>
       </el-col>
@@ -36,7 +36,7 @@
   </div>
 </template>
 <script>
-import { onBeforeMount, onMounted, watch } from "@vue/composition-api";
+import { onMounted, watch } from "@vue/composition-api";
 import { cityPicker_mixin } from "@/mixins/cityPicker.js";
 export default {
   name: "cityPicker",
@@ -58,12 +58,11 @@ export default {
     onMounted(() => {
       GetProvince();
     });
-
     watch(
       [
-        () => resultData.provinceValue,
-        () => resultData.cityValue,
-        () => resultData.areaValue,
+        () => resultData.provinceId,
+        () => resultData.cityId,
+        () => resultData.areaId,
       ],
       ([value1, value2, value3]) => {
         emit("update:cityPickerData", resultData);
