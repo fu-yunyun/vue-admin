@@ -1,6 +1,11 @@
 <template>
   <div class="Tablevue">
-    <el-table :data="tableConfig.tableData" border style="width: 100%">
+    <el-table
+      :data="tableConfig.tableData"
+      border
+      style="width: 100%"
+      @selection-change="handleSelectionChange"
+    >
       <el-table-column type="selection" v-if="tableConfig.selection">
       </el-table-column>
       <template v-for="items in tableConfig.tHead">
@@ -27,17 +32,29 @@
     </el-table>
     <!-- *******************************************分页****************************************** -->
     <div class="space-30"></div>
-    <el-pagination
-      v-if="tableConfig.PaginationShow"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="PageData.currentPage"
-      :page-sizes="PageData.pageSizes"
-      :page-size="PageData.pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="PageData.pageTotal"
-    >
-    </el-pagination>
+    <div class="tableFooter">
+      <el-row>
+        <el-col :span="4">
+          <template>
+            <slot name="tableFooterLeft"> </slot>
+          </template>
+        </el-col>
+        <el-col :span="20">
+          <el-pagination
+            class="pull-right"
+            v-if="tableConfig.PaginationShow"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="PageData.currentPage"
+            :page-sizes="PageData.pageSizes"
+            :page-size="PageData.pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="PageData.pageTotal"
+          >
+          </el-pagination>
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 <script>
@@ -49,6 +66,10 @@ export default {
     config: {
       type: Object,
       default: () => {},
+    },
+    TableList: {
+      type: Array,
+      default: () => [],
     },
   },
   mixins: [loadTableData_mixin, pagination_mixin],
@@ -77,6 +98,10 @@ export default {
       this.tableConfig.tHead = this.config.tHead;
       this.tableConfig.tableData = this.config.tableData;
     },
+    handleSelectionChange(val) {
+      console.log(val);
+      this.$emit("update:TableList", val);
+    },
     // aa() {
     //   console.log("comp");
     // }, 值为对象 组件对象覆盖混入对象 只打印comp   与data相反
@@ -89,6 +114,9 @@ div.el-table th {
 }
 .space-30 {
   height: 30px;
+}
+.pull-right {
+  float: right;
 }
 </style>
   

@@ -292,6 +292,7 @@ export default {
     /************************** 删除全部信息提示 ************************************************** */
 
     const delAll = () => {
+      // length == 0是因为在数据勾选后又取消会导致数据为非undefined，而是一个数组为0 的数据
       if (!deleteInfoId.value || deleteInfoId.value.length == 0) {
         root.$message.error("所选数据不能为空");
         return false;

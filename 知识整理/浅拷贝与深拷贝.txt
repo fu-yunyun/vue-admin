@@ -1,0 +1,15 @@
+浅拷贝： 将A对象赋值给B对象，修改B对象的属性和方法会影响到A对象的属性和方法。
+深拷贝： 将A对象赋值给B对象，修改B对象的属性和方法不会影响到A对象的属性和方法。
+    浅拷贝：
+    let a = this.vehicleChange;
+    let b = this.vehicleCangeData;
+    b = a;
+    此时如果修改b对象中的name，会同时吧a对象中的name修改掉
+
+    深拷贝：
+    this.vehicleChangeData = JSON.parse(JSON.stringify(this.vehicleChange));
+    JSON.stringify()对象转为串，JSON.parse()串转为对象，JSON操作是深拷贝操作
+
+    原理：
+    浅拷贝：新对象赋值，只是取的旧对象栈中的值，也就是引用对象的值
+    深拷贝：会在堆里边开辟一个空间，存放自己的对象值

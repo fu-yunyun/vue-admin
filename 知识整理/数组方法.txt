@@ -1,0 +1,4 @@
+arr.map
+arr.join
+arr.split
+arr.slice

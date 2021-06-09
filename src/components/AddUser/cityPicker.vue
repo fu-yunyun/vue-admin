@@ -36,7 +36,7 @@
   </div>
 </template>
 <script>
-import { onBeforeMount, watch } from "@vue/composition-api";
+import { onBeforeMount, onMounted, watch } from "@vue/composition-api";
 import { cityPicker_mixin } from "@/mixins/cityPicker.js";
 export default {
   name: "cityPicker",
@@ -55,7 +55,7 @@ export default {
       cityData,
       resultData,
     } = cityPicker_mixin();
-    onBeforeMount(() => {
+    onMounted(() => {
       GetProvince();
     });
 

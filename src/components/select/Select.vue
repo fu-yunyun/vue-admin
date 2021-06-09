@@ -3,7 +3,7 @@
     <div class="label-warp key">
       <label for=""> 关键字: </label>
       <div class="warp-content">
-        <el-select v-model="selectConfig.item.value">
+        <el-select v-model="selectConfig.item.value" @change="handlerSelect">
           <el-option
             v-for="items in selectConfig.item"
             :key="items.value"
@@ -17,6 +17,7 @@
 </template>
 <script>
 import { reactive } from "@vue/composition-api";
+
 export default {
   name: "select_key",
   props: {
@@ -25,15 +26,20 @@ export default {
       default: () => [],
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const selectConfig = reactive({
       item: [],
     });
     selectConfig.item = props.config;
+    const handlerSelect = (val) => {
+      emit("update:selectValue", val);
+    };
     return {
       selectConfig,
+      handlerSelect,
     };
   },
+
   /**
    *
    * 组件数据配置：selectConfig:{
