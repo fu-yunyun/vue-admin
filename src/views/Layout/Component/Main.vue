@@ -1,7 +1,13 @@
 <template>
   <div id="main-wrap">
     <div class="main-content">
-      <div class="content"><router-view /></div>
+      <div class="content">
+        <keep-alive>
+          <router-view v-if="$route.meta.keepAlive" />
+        </keep-alive>
+        <!-- 不需要缓存 -->
+        <router-view v-if="!$route.meta.keepAlive" />
+      </div>
     </div>
   </div>
 </template>

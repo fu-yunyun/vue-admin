@@ -1,0 +1,9 @@
+P64
+组件缓存：
+vue内置组件，能在组件切换的过程中将状态保留在内存中DOM元素，防止重复渲染DOM
+语法：
+    <keep-alive>
+        <router-view v-if="$route.meta.keepAlive"> </router-view>
+    <.keep-alive>
+    <router-view v-if="!$route.meta.keepAlive"> </router-view>
+    

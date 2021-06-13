@@ -40,7 +40,6 @@
           @change="handlerSwitch(slotData.data)"
         >
         </el-switch>
-        {{ slotData.data.status }}
       </template>
 
       <template v-slot:operation="slotData">

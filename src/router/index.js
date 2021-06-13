@@ -52,7 +52,8 @@ export const defaultRoutes = [
         component: () => import("../views/Console/index.vue"),
       }
     ]
-  }, {
+  },
+  {
     path: "/info",
     name: "Info",
     meta: {
@@ -66,6 +67,7 @@ export const defaultRoutes = [
         path: "/infoindex",
         name: "InfoIndex",
         meta: {
+          keepAlive: true,
           name: "信息列表"
         },
         component: () => import("../views/Info/index.vue"),
@@ -74,6 +76,7 @@ export const defaultRoutes = [
         path: "/infoCategory",
         name: "InfoCategory",
         meta: {
+          keepAlive: true,
           name: "信息分类"
         },
         component: () => import("../views/Info/category.vue"),
@@ -105,12 +108,31 @@ export const defaultRoutes = [
         path: "/userindex",
         name: "UserIndex",
         meta: {
+          keepAlive: false,
           name: "用户列表"
         },
         component: () => import("../views/User/index.vue"),
       }
     ]
-  },];
+  },
+  {
+    path: "/page404",
+    meta: {
+      iconName: "404"
+    },
+    hidden: true,
+    // Layout
+    component: () => import("../views/Layout/index.vue"),
+    children: [
+      {
+        path: "/404",
+        component: () => import("../views/404NotFound/index.vue"),
+      }
+    ]
+  },
+  { path: "*", redirect: "/404", hidden: true }
+];
+
 /*************************************************************************************** */
 /**
  * 动态路由

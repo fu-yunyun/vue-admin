@@ -64,7 +64,7 @@ module.exports = {
         // 配置多个代理
         proxy: {
             "/api": {
-                // target: "https://reactrouter.com/web/guides/quick-start", //配置跨域服务器地址
+                //配置跨域服务器地址
                 // target: "http://www.web-jshtml.cn/api/",
                 // target: " http://192.168.1.103:8082",
                 target: " http://localhost:8082",

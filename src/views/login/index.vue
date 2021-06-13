@@ -399,9 +399,11 @@ let {a,b:8,c} = aa();
             //应该放在register成功之后 跳转登录
             // 跳转至登录
             toggleMenu(menuTab[0]);
+            clearInterval(timer.value);
           } // 当按钮为登录时，请求登录接口
           else {
             login();
+            clearInterval(timer.value);
           }
         } else {
           console.log("error submit!!");

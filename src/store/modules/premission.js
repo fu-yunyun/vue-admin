@@ -44,6 +44,8 @@ const premission = {
                             return item;
                         }
                     })
+                    // 添加动态路由的最后一个路由 404页面
+                    addRouters.push(dynaRouters[dynaRouters.length - 1])
                 }
                 //更新路由
                 commit("SET_ROUTERS", addRouters)
