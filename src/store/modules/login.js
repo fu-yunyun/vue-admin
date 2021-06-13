@@ -24,17 +24,6 @@ const login = {
         login({ commit, state }, requestData) {
             return new Promise((resolve, reject) => {
                 Login(requestData).then((response) => {
-                    // 查看后台返回数据
-                    // console.log("********login.js********")
-                    // // 获取后台相应的数据data对象
-                    // let data = response.data.data
-                    // // 设置共享管理状态
-                    // commit("SET_TOKEN", data.token)
-                    // commit("SET_USERNAME", data.username)
-                    // // 将username和token存入cookie 数据请求不成功 未能执行
-                    // setToKen(state.token)
-                    // setUserName(state.username)
-
                     // 存储cookie值，设置路由防卫
                     setToKen("admin_token");
                     setUserName(requestData.username);

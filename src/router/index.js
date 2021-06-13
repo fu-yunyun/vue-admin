@@ -7,7 +7,10 @@ Vue.use(VueRouter);
 // 默认读取index
 import Layout from "../views/Layout"
 
-const routes = [
+/**
+ * 默认加载路由
+ */
+export const defaultRoutes = [
   {
     path: "/",
     redirect: "login",
@@ -49,12 +52,11 @@ const routes = [
         component: () => import("../views/Console/index.vue"),
       }
     ]
-  },
-  /*************************************************************************************** */
-  {
+  }, {
     path: "/info",
     name: "Info",
     meta: {
+      system: "InfoAdmin",
       name: "信息管理",
       iconName: "info"
     },
@@ -93,6 +95,7 @@ const routes = [
     name: "User",
     meta: {
       name: "用户管理",
+      system: "UserAdmin",
       iconName: "user"
     },
     // Layout
@@ -107,12 +110,19 @@ const routes = [
         component: () => import("../views/User/index.vue"),
       }
     ]
-  },
-];
+  },];
+/*************************************************************************************** */
+/**
+ * 动态路由
+ */
+export const dynaRouters = [
+
+]
 
 
 const router = new VueRouter({
-  routes,
+  // 加载默认路由
+  routes: defaultRoutes,
 });
 
 export default router;

@@ -11,34 +11,11 @@ export function cityPicker_mixin() {
         cityId: "",
         areaId: "",
         // 省份显示数据
-        provinceData: [
-            {
-                provinceCode: "123",
-                provinceName: "省份",
-            },
-            {
-                provinceCode: "13",
-                provinceName: "省份1",
-            },
-        ],
+        provinceData: [],
         // 城市显示数据
-        cityData: [
-            {
-                cityCode: "13",
-                cityName: "城市",
-            },
-            {
-                cityCode: "12",
-                cityName: "城市1",
-            },
-        ],
+        cityData: [],
         // 区显示数据
-        areaData: [
-            {
-                areaCode: "123",
-                areaName: "区域",
-            },
-        ],
+        areaData: [],
     });
     // 选中数据 返回给父组件
     const resultData = reactive({

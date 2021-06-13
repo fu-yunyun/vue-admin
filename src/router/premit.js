@@ -14,8 +14,34 @@ router.beforeEach((to, from, next) => {
             store.commit("REMOVE_USERNAME", "")
             next();
         }
-        next();
+        else {
+            next()
+        }
         // 路由的动态添加， 分配菜单，每个角色分配不同的菜单
+        // if (store.getters["roles"].length == 0) {
+        //     store.dispatch("getUserRoles_store").then(response => {
+        //         store.dispatch("createDynaRouters_store", response).then(response => {
+        //             let addRouters = store.getters["addRouters"]
+        //             let allRouters = store.getters["allRouters"]
+        //             // 更新视图渲染路由
+        //             router.options.routes = allRouters;
+        //             // 将新增的路由添加进路由  进行路由跳转
+        //             router.addRoute(addRouters)
+        //             //
+        //             next({ ...next, replace: true })
+        //         }).catch(error => {
+
+        //         })
+        //     }).catch(error => {
+
+        //     })
+        // } else {
+        //     // 退出时需要清除roles值 防止roles的长度不为0直接跳转
+        //     next()
+        // }
+
+
+
     } else {
         // 判断是否未白名单路由
         // to.path 获取跳转页面的路由

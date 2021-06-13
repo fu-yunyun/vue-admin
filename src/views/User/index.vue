@@ -29,17 +29,20 @@
     <!-- table组件是包含分页的整个组件 -->
     <Tablevue :config="tableConfig" :TableList.sync="tableListData">
       <!-- 插槽 -->
+      <!-- 启用和禁用 -->
       <template v-slot:status="slotData">
         <el-switch
           v-model="slotData.data.status"
+          active-value="0"
+          inactive-value="1"
           active-color="#13ce66"
           inactive-color="#ff4949"
           @change="handlerSwitch(slotData.data)"
-          active-value="0"
-          inactive-value="1"
         >
         </el-switch>
+        {{ slotData.data.status }}
       </template>
+
       <template v-slot:operation="slotData">
         <el-button size="mini" type="danger" @click="del(slotData.data)">
           删除
@@ -136,12 +139,12 @@ export default {
         {
           prop: "status",
           label: "启用/禁用",
-          slotName: "status",
           columnType: "solt",
+          slotName: "status",
         },
         {
-          label: "操作",
           slotName: "operation",
+          label: "操作",
           columnType: "solt",
         },
       ],
@@ -159,12 +162,11 @@ export default {
     };
     const edit = (row) => {
       console.log(row);
-      console.log("*********************edit**********8");
       title.value = "编辑信息";
       tableConfig.checkBoxData = row;
       addUserFlag.value = true;
     };
-    /*************************************************删除编辑******************************************* */
+    /*************************************************删除******************************************* */
     const del = (value) => {
       console.log(value.id);
       // 获取删除id
@@ -213,6 +215,7 @@ export default {
      * 启用禁用
      */
     const handlerSwitch = (val) => {
+      console.log(val.status);
       let requestData = {
         status: val.status,
         id: val.id,

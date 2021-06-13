@@ -137,23 +137,22 @@ export default {
           id: "3",
         },
       ],
+      checkBoxData: [],
       form: {
         // 角色选中数据
         role: [],
-        // 角色选项
-
         username: "",
         password: "",
         phone: "",
         name: "",
-        checkBoxData: [],
+
         region: {},
         // 是否启用
-        status: "1",
+        status: "",
       },
     });
     const handlerCheckbox = (val) => {
-      data.form.checkBoxData = val;
+      data.checkBoxData = val;
     };
     /**
      * 添加用户信息提交
@@ -186,9 +185,7 @@ export default {
      */
     const open = () => {
       if (title.value == "编辑信息") {
-        // console.log(props.checkBoxData);
-        // if (props.checkBoxData) data.form = props.checkBoxData;
-        // console.log("*********************************88");
+        console.log("edit");
       } else if ((title.value = "新增用户")) {
         console.log("add");
       }

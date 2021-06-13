@@ -69,3 +69,15 @@ export function getRole_api(data) {
         data
     });
 }
+
+/**
+ * 获取用户角色权限
+ */
+export function getUserRole_api(data) {
+    // 返回数据 拿到响应的数据
+    return service.request({
+        method: "post",
+        url: "/user/getUserRole",
+        data
+    });
+}
