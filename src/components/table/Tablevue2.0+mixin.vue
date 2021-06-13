@@ -16,10 +16,6 @@
           :label="items.label"
           v-if="items.columnType == 'solt'"
         >
-          <!-- <template>
-            <slot name="status"> </slot>
-          </template> -->
-
           <template slot-scope="scope">
             <slot :name="items.slotName" :data="scope.row"> </slot>
           </template>

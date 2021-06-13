@@ -42,7 +42,7 @@
 <script>
 import { onBeforeMount, reactive, watch } from "@vue/composition-api";
 import { loadTableData_fn } from "@/components/table/loadTableData.js";
-import { Pagination_fn } from "@/components/table/Pagination.js";
+import { Pagination_fn } from "@/components/table/Pagination.js"
 export default {
   name: "Tablevue",
   props: {

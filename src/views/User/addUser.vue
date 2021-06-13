@@ -51,12 +51,12 @@
         </el-form-item>
         <!-- ***************************************************************************************** -->
         <el-form-item label="是否启用: " :label-width="formLabelWidth">
-          <el-radio v-model="data.form.status" label="0">启用</el-radio>
-          <el-radio v-model="data.form.status" label="1">禁用</el-radio>
+          <el-radio v-model="data.form.status" :label="0">启用</el-radio>
+          <el-radio v-model="data.form.status" :label="1">禁用</el-radio>
         </el-form-item>
         <!-- ***************************************************************************************** -->
         <el-form-item label="角色: " :label-width="formLabelWidth">
-          <el-checkbox-group v-model="data.form.role" @change="handlerCheckbox">
+          <el-checkbox-group v-model="data.role" @change="handlerCheckbox">
             <el-checkbox
               v-for="items in data.roles"
               :key="items.id"
@@ -88,9 +88,9 @@ export default {
       default: false,
     },
     // 多选框数据
-    checkBoxData: {
+    editData: {
       type: Object,
-      default: () => [],
+      default: () => {},
     },
     // 弹窗类型
     boxStyle: {
@@ -119,7 +119,7 @@ export default {
     // 获取地区地址
 
     const data = reactive({
-      // 地区       // 获取地址 对象类型
+      role: [], // 地区       // 获取地址 对象类型
       roles: [
         {
           role: "InfoAdmin",
@@ -140,7 +140,7 @@ export default {
       checkBoxData: [],
       form: {
         // 角色选中数据
-        role: [],
+
         username: "",
         password: "",
         phone: "",
@@ -185,9 +185,12 @@ export default {
      */
     const open = () => {
       if (title.value == "编辑信息") {
-        console.log("edit");
+        data.form = props.editData;
+        if (props.editData.role) {
+          data.role = props.editData.role;
+        }
       } else if ((title.value = "新增用户")) {
-        console.log("add");
+        data.form = {};
       }
     };
     /**

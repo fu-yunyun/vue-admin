@@ -33,8 +33,8 @@
       <template v-slot:status="slotData">
         <el-switch
           v-model="slotData.data.status"
-          active-value="0"
-          inactive-value="1"
+          :active-value="0"
+          :inactive-value="1"
           active-color="#13ce66"
           inactive-color="#ff4949"
           @change="handlerSwitch(slotData.data)"
@@ -59,7 +59,7 @@
     <!-- ****************************************************************************************** -->
     <AddUservue
       :dialog_info_flag.sync="addUserFlag"
-      :checkBoxData.sync="tableConfig.checkBoxData"
+      :editData.sync="tableConfig.editData"
       :boxStyle="title"
     />
   </div>
@@ -150,7 +150,7 @@ export default {
       ],
       // tableData数据可以从组件中进行接口调用获取，则不必再此页面进行数据的初始化，但是获取的tableData属性值需要和tHead中的属性值对应以便表格数据的渲染
       tableData: [],
-      checkBoxData: {},
+      editData: {},
     });
     /**
      * 新增用户
@@ -163,7 +163,7 @@ export default {
     const edit = (row) => {
       console.log(row);
       title.value = "编辑信息";
-      tableConfig.checkBoxData = row;
+      tableConfig.editData = row;
       addUserFlag.value = true;
     };
     /*************************************************删除******************************************* */
