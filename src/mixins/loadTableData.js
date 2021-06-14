@@ -6,6 +6,7 @@ let loadTableData_mixin = {
     methods: {
         // 请求获取用户列表信息
         loadTableData() {
+            this.loading = true
             let requestData = this.config.requestJson;
             requestData.requestData.pageSize = this.PageData.pageSize;
             requestData.requestData.pageNumber = this.PageData.currentPage;
@@ -17,10 +18,11 @@ let loadTableData_mixin = {
                     this.tableConfig.tableData = response.data.users;
                     this.PageData.pageTotal = response.data.total
                     // 将获取的pageTotal进行赋值传给table组件 
-
+                    this.loading = false
                 })
                 .catch((error) => {
                     console.log(error);
+                    this.loading = false
                 });
         },
 

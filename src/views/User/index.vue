@@ -160,7 +160,6 @@ export default {
       addUserFlag.value = true;
     };
     const edit = (row) => {
-      console.log(row);
       title.value = "编辑信息";
       tableConfig.editData = row;
       addUserFlag.value = true;
@@ -177,9 +176,6 @@ export default {
       });
     };
     const delAll = () => {
-      // console.log(tableListData.value);
-
-      // console.log(deleteInfoId.value)
       if (!tableListData.value) {
         root.$message.error("所选数据不能为空");
         return false;

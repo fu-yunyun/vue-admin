@@ -30,7 +30,6 @@ export function cityPicker_mixin() {
         resetValue({ type: "province" });
         getCityPicker_api({ type: "province" })
             .then((response) => {
-                console.log(response);
                 cityData.provinceData = response.data
             })
             .catch((error) => {

@@ -192,6 +192,7 @@ let {a,b:8,c} = aa();
         callback();
       }
     };
+
     // 验证验证码
     var checkCode = (rule, value, callback) => {
       if (!value) {
@@ -264,7 +265,22 @@ let {a,b:8,c} = aa();
     /****************************************************************************************************** */
     // 方法的定义
     // 清除定时器及恢复按钮默认设置
+    /**
+     * 服务方式全屏加载
+     */
+    const openFullScreen2 = () => {
+      const loading = root.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)",
+      });
+      setTimeout(() => {
+        loading.close();
+      }, 2000);
+    };
 
+    /***************************************************************************************************** */
     const clearCountDown = () => {
       // 按钮切换，初始化登录按钮和获取验证码按钮
       loginButtonStatus.value = true;
@@ -391,6 +407,7 @@ let {a,b:8,c} = aa();
 
     // 提交表单
     const submitForm = (formName) => {
+      openFullScreen2();
       refs[formName].validate((valid) => {
         if (valid) {
           // 当按钮为注册时  请求注册
@@ -508,6 +525,7 @@ let {a,b:8,c} = aa();
       codeButtonStatus,
       loginButtonStatus,
       getSms,
+      openFullScreen2,
     };
   },
 };

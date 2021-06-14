@@ -5,6 +5,7 @@
       border
       style="width: 100%"
       @selection-change="handleSelectionChange"
+      v-loading="loading"
     >
       <el-table-column type="selection" v-if="tableConfig.selection">
       </el-table-column>
@@ -75,6 +76,7 @@ export default {
   mixins: [loadTableData_mixin, pagination_mixin],
   data() {
     return {
+      loading: false,
       tableConfig: {
         // 是否含有多选框
         selection: false,

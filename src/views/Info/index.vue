@@ -88,6 +88,7 @@
       style="width: 100%"
       @selection-change="handleSelectionChange"
       ref="multipleTable"
+      v-loading="loading"
     >
       <el-table-column type="selection" width="50"> </el-table-column>
       <el-table-column prop="title" label="标题" width="600"> </el-table-column>
@@ -173,6 +174,7 @@ export default {
     const deleteInfoId = ref();
     const infoType = ref();
     const infoId = ref();
+    const loading = ref(false);
     const { getInfoCategory, category } = common();
 
     /* *******************************************对象数据定义 ******************************/
@@ -246,6 +248,8 @@ export default {
 
     /**********************************  获取列表数据  ************************************** */
     const getList = () => {
+      // 初始化表格加载
+      loading.value = true;
       // 获取格式化请求数据
       let requestData = formatData();
       getList_api(requestData)
@@ -255,8 +259,11 @@ export default {
           // 更新总页码
           total.value = response.data.total;
           // console.log(response.data.total);
+          loading.value = false;
+          console.log(loading.value);
         })
         .catch((error) => {
+          loading.value = false;
           root.$message.error(error.msg);
         });
     };
@@ -370,6 +377,7 @@ export default {
       formInline,
       tableData,
       page,
+      loading,
       // function
       editInfo,
       addInfo,

@@ -12,7 +12,7 @@ import "./router/premit.js"
 import "./icons/index.js"
 // 自定义全局方法 全局注入
 import global from "./utils/global.js"
-
+import 'default-passive-events'
 Vue.use(global)
 Vue.use(ElementUI);
 Vue.use(VueCompositionApi);
