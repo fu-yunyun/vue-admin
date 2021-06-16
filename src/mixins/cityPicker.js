@@ -73,10 +73,10 @@ export function cityPicker_mixin() {
      */
     const resetValue = (params) => {
         if (params.type == "province") {
-            cityData.cityValue = "";
-            cityData.areaValue = "";
+            cityData.cityId = "";
+            cityData.areaId = "";
         } else if (params.type == "city") {
-            cityData.areaValue = "";
+            cityData.areaId = "";
         }
         // 写法2： 
         /**
@@ -93,9 +93,12 @@ export function cityPicker_mixin() {
         result();
     }
     const result = () => {
-        for (let item in resultData) {
-            resultData[item] = cityData[item]
-        }
+        let temp = cityData.provinceData.filter(item => item.provinceCode == cityData.provinceId)
+        resultData.provinceId = temp.map(item => item.provinceId)[0]
+        temp = cityData.cityData.filter(item => item.cityCode == cityData.cityId)
+        resultData.cityId = temp.map(item => item.cityId)[0]
+        temp = cityData.areaData.filter(item => item.areaCode == cityData.areaId)
+        resultData.areaId = temp.map(item => item.areaId)[0]
     }
     return {
         GetProvince,

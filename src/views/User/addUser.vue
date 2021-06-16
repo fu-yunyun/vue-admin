@@ -77,7 +77,7 @@
               v-for="items in data.roles"
               :key="items.id"
               :label="items.role"
-              >{{ items.value }}
+              >{{ items.role }}
             </el-checkbox>
           </el-checkbox-group>
         </el-form-item>
@@ -147,23 +147,7 @@ export default {
       },
 
       // 地区       // 获取地址 对象类型
-      roles: [
-        {
-          role: "InfoAdmin",
-          value: "信息管理员",
-          id: "1",
-        },
-        {
-          role: "UserAdmin",
-          value: "用户管理员",
-          id: "2",
-        },
-        {
-          role: "SystemAdmin",
-          value: "系统管理员",
-          id: "3",
-        },
-      ],
+      roles: [],
       checkBoxData: [],
     });
     var validatePass = (rule, value, callback) => {
@@ -200,7 +184,7 @@ export default {
         {
           type: "array",
           required: true,
-          message: "请至少选择一个活动性质",
+          message: "请至少选择一个用户角色",
           trigger: "change",
         },
       ],
@@ -217,66 +201,70 @@ export default {
 
     /*
      * 表单校验
+     
+    /**
+     * 添加用户信息提交
      */
-    const vali = () => {
+
+    const submit = () => {
+      data.form.role = data.checkBoxData;
       refs.form.validate((valid) => {
         if (valid) {
-          alert("submit!");
+          if (title.value == "新增用户") {
+            // 将数组转换成字符串
+            let requestData = JSON.parse(JSON.stringify(data.form));
+            addUser_api(requestData)
+              .then((response) => {
+                root.$message.success(response.msg);
+              })
+              .catch((error) => {
+                root.$message.error(error.msg);
+              });
+            close();
+          } else if (title.value == "编辑信息") {
+            console.log(data.form.role);
+            editUser_api(data.form)
+              .then((response) => {
+                root.$message.success(response.msg);
+              })
+              .catch((error) => {
+                root.$message.error(error.msg);
+              });
+          }
         } else {
-          console.log("error submit!!");
+          root.$message.warinig("请输入合法数据");
           return false;
         }
       });
     };
 
     const handlerCheckbox = (val) => {
-      data.checkBoxData = val;
-    };
-
-    /**
-     * 添加用户信息提交
-     */
-    const submit = () => {
-      if (!vali()) return false;
-
-      if (title.value == "新增用户") {
-        // 将数组转换成字符串
-        let requestData = JSON.parse(JSON.stringify(data.form));
-        addUser_api(requestData)
-          .then((response) => {
-            console.log(response);
-          })
-          .catch((error) => {
-            console.log("add user fail");
-          });
-        close();
-      } else if (title.value == "编辑信息") {
-        editUser_api(form)
-          .then((response) => {
-            console.log(response);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+      let temp = [];
+      for (let items of val) {
+        for (let key of data.roles.filter((item) => item.role == items)) {
+          temp.push(key.id);
+        }
       }
+      data.checkBoxData = temp;
     };
+
     /**
      * 打开弹窗
      */
     const open = () => {
+      let data_r = JSON.parse(JSON.stringify(props.editData));
       if (title.value == "编辑信息") {
-        if (props.editData.role) {
-          data.form.role = props.editData.role;
-          data.form = props.editData;
-        } else {
-          data.form = props.editData;
-          data.form.role = [];
-        }
+        data_r.region = {};
+        data.form = data_r;
+        // console.log(data.form.role);
       } else if ((title.value = "新增用户")) {
-        // 清空数据
-        data.form = {};
-        data.form.role = [];
+        data.form.username = "";
         data.form.password = "";
+        data.form.phone = "";
+        data.form.name = "";
+        data.form.role = [];
+        data.form.region = {};
+        data.form.status = "";
       }
     };
 
@@ -294,7 +282,7 @@ export default {
       getRole_api()
         .then((response) => {
           // data.form.roles = response
-          console.log(response);
+          data.roles = response.data;
         })
         .catch((error) => {
           console.log("getRole Fail");
@@ -330,7 +318,6 @@ export default {
       close,
       submit,
       handlerCheckbox,
-      vali,
     };
   },
 };

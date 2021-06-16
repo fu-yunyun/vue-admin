@@ -66,11 +66,12 @@
 
 <script>
 import { reactive, ref } from "@vue/composition-api";
-import { deleteUser_api, searchUser_api, switchUser_api } from "@/api/user.js";
+import { deleteUser_api, switchUser_api } from "@/api/user.js";
 import Selectvue from "@/components/select/Select.vue";
 import Tablevue from "@/components/table/Tablevue2.0+mixin.vue";
 import requestUrl_api from "@/api/requestUrl.js";
 import AddUservue from "./addUser.vue";
+import { getUserList_api } from "../../api/news";
 export default {
   name: "userIndex",
   components: { Selectvue, Tablevue, AddUservue },
@@ -128,7 +129,7 @@ export default {
           label: "手机号",
         },
         {
-          prop: "address",
+          prop: "region",
           label: "地址",
         },
         {
@@ -210,12 +211,10 @@ export default {
      * 启用禁用
      */
     const handlerSwitch = (val) => {
-      console.log(val.status);
       let requestData = {
         status: val.status,
         id: val.id,
       };
-      console.log(requestData);
       switchUser_api(requestData)
         .then((response) => {
           console.log(response);
@@ -228,16 +227,38 @@ export default {
      * 搜索数据
      */
     const search = () => {
-      let requestData = {
-        searchType: selectConfig.selectValue,
-        searchContent: input.value,
-      };
-      searchUser_api(requestData)
+      let requestData = {};
+      if (selectConfig.selectValue == "username") {
+        requestData = {
+          requestMethod: "post",
+          requestUrl: requestUrl_api.getUserList,
+          requestData: {
+            username: input.value,
+          },
+        };
+      } else if (selectConfig.selectValue == "phone") {
+        requestData = {
+          requestMethod: "post",
+          requestUrl: requestUrl_api.getUserList,
+          requestData: {
+            phone: input.value,
+          },
+        };
+      } else {
+        requestData = {
+          requestMethod: "post",
+          requestUrl: requestUrl_api.getUserList,
+          requestData: {
+            name: input.value,
+          },
+        };
+      }
+      getUserList_api(requestData)
         .then((response) => {
-          console.log(response);
+          root.$message.success(response.msg);
         })
         .catch((error) => {
-          console.log("search fail");
+          root.$message.error(error.msg);
         });
     };
     /**
